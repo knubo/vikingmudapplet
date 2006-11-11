@@ -26,7 +26,6 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private final ColorPane textPane;
 
-
 	/**
 	 * Stuff that was left when text was parsed. Is kept to the next time text
 	 * comes from the mud.
@@ -36,7 +35,6 @@ class CommunicationThread implements Runnable, KeyListener {
 	/** Keeps color codes and formatting for ansi text. */
 	private HashMap formatCodes;
 
-	
 	private Color currentColor;
 	/** Keeps track of bold for text to be written. */
 	private boolean currentBold;
@@ -92,7 +90,13 @@ class CommunicationThread implements Runnable, KeyListener {
 			vikingSocket = new Socket("connect.vikingmud.org", 2001);
 			vikingOut = new PrintStream(vikingSocket.getOutputStream(), true);
 			vikingIn = vikingSocket.getInputStream();
-			
+
+			/*
+			 * Skip some init telnet noise.
+			 */
+			for (int i = 0; i < 6; i++) {
+				vikingIn.read();
+			}
 
 		} catch (UnknownHostException e) {
 			textPane.setText(e.getMessage());
@@ -114,7 +118,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private void visTekst(String fromServerInput) {
 		String fromServer = fromServerInput;
-		
+
 		if (leftovers != null) {
 			fromServer = leftovers + fromServer;
 			leftovers = null;
@@ -296,7 +300,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	}
 
 	public void doAction(String action) {
-		textPane.appendPlain(action+"\n", Color.white);
+		textPane.appendPlain(action + "\n", Color.white);
 		vikingOut.println(action);
 	}
 
@@ -304,6 +308,5 @@ class CommunicationThread implements Runnable, KeyListener {
 		startupLists.add("guest");
 
 	}
-
 
 }

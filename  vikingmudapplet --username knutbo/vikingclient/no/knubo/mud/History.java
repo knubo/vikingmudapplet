@@ -13,6 +13,8 @@ class History {
 	void addHistroy(String command) {
 		/* Do not recall similar commands repeated. */
 		if (history[pos] != null && history[pos].equals(command)) {
+			historypos = pos;
+			first = false;
 			return;
 		}
 

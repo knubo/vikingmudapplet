@@ -17,16 +17,15 @@ import javax.swing.JTextArea;
 
 class CommunicationThread implements Runnable, KeyListener {
 
-	private List actionLists;
+	/** The place for pre actions. Not good for sending after startup. */
+	private List startupLists;
 	private Socket vikingSocket;
 
 	private PrintStream vikingOut;
-
 	private InputStream vikingIn;
 
 	private final ColorPane textPane;
 
-	private Color currentColor;
 
 	/**
 	 * Stuff that was left when text was parsed. Is kept to the next time text
@@ -34,12 +33,14 @@ class CommunicationThread implements Runnable, KeyListener {
 	 */
 	private String leftovers;
 
-	private HashMap formatCode;
+	/** Keeps color codes and formatting for ansi text. */
+	private HashMap formatCodes;
 
+	
+	private Color currentColor;
+	/** Keeps track of bold for text to be written. */
 	private boolean currentBold;
-
 	private boolean currentUnderline;
-
 	private boolean currentRevVid;
 
 	private final History history;
@@ -49,7 +50,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		this.history = history;
 		currentColor = Color.WHITE;
 		setupColorCodes();
-		actionLists = new LinkedList();
+		startupLists = new LinkedList();
 	}
 
 	class RevVid {
@@ -61,29 +62,29 @@ class CommunicationThread implements Runnable, KeyListener {
 	}
 
 	private void setupColorCodes() {
-		formatCode = new HashMap();
+		formatCodes = new HashMap();
 
-		formatCode.put("30", Color.DARK_GRAY); /* Really black. */
-		formatCode.put("31", Color.RED);
-		formatCode.put("32", Color.GREEN);
-		formatCode.put("33", Color.YELLOW);
-		formatCode.put("34", Color.BLUE);
-		formatCode.put("35", Color.MAGENTA);
-		formatCode.put("36", Color.cyan);
-		formatCode.put("37", Color.WHITE);
-		formatCode.put("40", new RevVid(Color.DARK_GRAY)); /* Really black */
-		formatCode.put("41", Color.RED);
-		formatCode.put("42", Color.GREEN);
-		formatCode.put("43", new RevVid(Color.YELLOW));
-		formatCode.put("44", new RevVid(Color.BLUE));
-		formatCode.put("45", new RevVid(Color.MAGENTA));
-		formatCode.put("46", new RevVid(Color.CYAN));
-		formatCode.put("", "");
+		formatCodes.put("30", Color.DARK_GRAY); /* Really black. */
+		formatCodes.put("31", Color.RED);
+		formatCodes.put("32", Color.GREEN);
+		formatCodes.put("33", Color.YELLOW);
+		formatCodes.put("34", Color.BLUE);
+		formatCodes.put("35", Color.MAGENTA);
+		formatCodes.put("36", Color.cyan);
+		formatCodes.put("37", Color.WHITE);
+		formatCodes.put("40", new RevVid(Color.DARK_GRAY)); /* Really black */
+		formatCodes.put("41", Color.RED);
+		formatCodes.put("42", Color.GREEN);
+		formatCodes.put("43", new RevVid(Color.YELLOW));
+		formatCodes.put("44", new RevVid(Color.BLUE));
+		formatCodes.put("45", new RevVid(Color.MAGENTA));
+		formatCodes.put("46", new RevVid(Color.CYAN));
+		formatCodes.put("", "");
 
-		formatCode.put("1", "bold");
-		formatCode.put("5", Color.WHITE); /* Really blink */
-		formatCode.put("4", "underline");
-		formatCode.put("7", new RevVid(Color.WHITE)); /* Inverse */
+		formatCodes.put("1", "bold");
+		formatCodes.put("5", Color.WHITE); /* Really blink */
+		formatCodes.put("4", "underline");
+		formatCodes.put("7", new RevVid(Color.WHITE)); /* Inverse */
 	}
 
 	public void run() {
@@ -192,7 +193,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			currentBold = true;
 		}
 
-		Object nextAction = formatCode.get(color);
+		Object nextAction = formatCodes.get(color);
 
 		if (nextAction instanceof RevVid) {
 			RevVid revvid = (RevVid) nextAction;
@@ -234,7 +235,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		if (available < 1) {
 			available = 1;
 
-			if (actionLists.size() > 0) {
+			if (startupLists.size() > 0) {
 				doActions();
 				return readSome();
 			}
@@ -250,11 +251,11 @@ class CommunicationThread implements Runnable, KeyListener {
 	}
 
 	private void doActions() {
-		for (Iterator i = actionLists.iterator(); i.hasNext();) {
+		for (Iterator i = startupLists.iterator(); i.hasNext();) {
 			String action = (String) i.next();
 			vikingOut.print(action + "\n");
 		}
-		actionLists.clear();
+		startupLists.clear();
 
 	}
 
@@ -300,7 +301,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	}
 
 	public void loginGuest() {
-		actionLists.add("guest");
+		startupLists.add("guest");
 
 	}
 

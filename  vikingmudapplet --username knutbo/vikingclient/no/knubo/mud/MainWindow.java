@@ -106,7 +106,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		// specify the initial size and location for the window.
 		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
-		scrollPane.setMinimumSize(new Dimension(width, 460));
+		scrollPane.setMinimumSize(new Dimension(width, 360));
 		setLocation(50, 50);
 
 		GridBagLayout gbl = new GridBagLayout();
@@ -144,7 +144,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		mb.add(createHelpMenu());
 		setJMenuBar(mb);
 
-		setBounds(0, 0, textPane.getMinimumSize().width + 40, 640);
+		setBounds(0, 0, textPane.getMinimumSize().width + 40, 540);
 		// put it all together and show it.
 		setVisible(true);
 	}

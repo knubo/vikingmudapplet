@@ -35,6 +35,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
@@ -42,7 +43,8 @@ import javax.swing.ScrollPaneConstants;
  * A <a href="http://ostermiller.org/syntax/editor.html">demonstration text
  * editor</a> that uses syntax highlighting.
  */
-public class MainWindow extends JApplet implements HelpTopics {
+public class MainWindow extends JApplet implements MenuTopics {
+
 
 	/**
 	 * The place where the text is drawn.
@@ -136,18 +138,17 @@ public class MainWindow extends JApplet implements HelpTopics {
 		add(textPanel);
 
 		// Set up the menu bar.
-		JMenu gameMenu = createGameMenu();
-		JMenu helpMenu = createHelpMenu();
 		JMenuBar mb = new JMenuBar();
-		mb.add(gameMenu);
-		mb.add(helpMenu);
+		mb.add(createGameMenu());
+		mb.add(createHistoryMenu());
+		mb.add(createHelpMenu());
 		setJMenuBar(mb);
 
 		setBounds(0, 0, textPane.getMinimumSize().width + 40, 640);
 		// put it all together and show it.
 		setVisible(true);
 	}
-	
+
 	public boolean login() {
 
 		if (theThread != null && theThread.isAlive()) {
@@ -164,6 +165,29 @@ public class MainWindow extends JApplet implements HelpTopics {
 		theThread.start();
 		this.textInput.requestFocus();
 		return true;
+	}
+
+	private JMenu createHistoryMenu() {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+			}
+		};
+
+		JMenu menu = new JMenu("History");
+
+		JMenuItem item = new JMenuItem(HISTORY_PREVIOUS_COMMAND);
+		menu.add(item);
+
+		item = new JMenuItem(HISTORY_NEXT_COMMAND);
+		menu.add(item);
+
+		menu.add(new JSeparator());
+
+		item = new JMenuItem(HISTORY_SHOW_ALL);
+		menu.add(item);
+
+		return menu;
 	}
 
 	/**

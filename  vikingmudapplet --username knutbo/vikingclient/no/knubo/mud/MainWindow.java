@@ -45,7 +45,6 @@ import javax.swing.ScrollPaneConstants;
  */
 public class MainWindow extends JApplet implements MenuTopics {
 
-
 	/**
 	 * The place where the text is drawn.
 	 */
@@ -171,17 +170,17 @@ public class MainWindow extends JApplet implements MenuTopics {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
-				
+
 				final String choice = item.getText();
-				
-				if(choice.equals(HISTORY_NEXT_COMMAND)) {
+
+				if (choice.equals(HISTORY_NEXT_COMMAND)) {
 					textInput.setText(history.next());
-				} else if(choice.equals(HISTORY_PREVIOUS_COMMAND)) {
-					textInput.setText(history.previous());					
-				} else if(choice.equals(HISTORY_SHOW_ALL)) {
+				} else if (choice.equals(HISTORY_PREVIOUS_COMMAND)) {
+					textInput.setText(history.previous());
+				} else if (choice.equals(HISTORY_SHOW_ALL)) {
 					textPane.appendPlain(history.allHistory(), Color.WHITE);
 				}
- 			}
+			}
 		};
 
 		JMenu menu = new JMenu("History");
@@ -253,10 +252,16 @@ public class MainWindow extends JApplet implements MenuTopics {
 				} else if (item.getText().equals(HELP_GETTING_STARTED)) {
 					if (communicationThread != null) {
 						communicationThread.doAction("!help");
+					} else {
+						textPane.appendPlain("You need to connect first.\n",
+								Color.YELLOW);
 					}
 				} else if (item.getText().equals(HELP_TOPICS)) {
 					if (communicationThread != null) {
 						communicationThread.doAction("!help mortal");
+					} else {
+						textPane.appendPlain("You need to connect first.\n",
+								Color.YELLOW);
 					}
 				}
 			}

@@ -1,5 +1,7 @@
 package no.knubo.mud;
 
+import java.util.LinkedList;
+
 class History {
 	private static final int MAX_HISTORY = 100;
 	String[] history = new String[MAX_HISTORY];
@@ -24,11 +26,11 @@ class History {
 
 	String previous() {
 
-		if(!first) {
+		if (!first) {
 			first = true;
 			return history[historypos];
 		}
-		
+
 		final int maxpos = MAX_HISTORY - 1;
 
 		/* Check if we can wrap */
@@ -53,19 +55,22 @@ class History {
 	}
 
 	String next() {
-		if(!first) {
+		if (!first) {
 			first = true;
 			return history[historypos];
 		}
-		
-		/* Check if There is still somethign to show. If not written yet we don't display anything. */
-		if ((historypos + 1) < MAX_HISTORY && history[historypos+1] == null) {
+
+		/*
+		 * Check if There is still somethign to show. If not written yet we
+		 * don't display anything.
+		 */
+		if ((historypos + 1) < MAX_HISTORY && history[historypos + 1] == null) {
 			first = false;
 			return "";
 		}
 
 		historypos++;
-		
+
 		if (historypos > pos && !wrapped) {
 			historypos = pos;
 		}
@@ -75,5 +80,16 @@ class History {
 		}
 
 		return history[historypos];
+	}
+
+	public String allHistory() {
+		LinkedList toShow = new LinkedList();
+		
+		for (int i = 0; i < history.length; i++) {
+			if(history[i] != null) {
+				toShow.add(history[i]);
+			}
+		}
+		return "Recorded history:\n"+toShow.toString();
 	}
 }

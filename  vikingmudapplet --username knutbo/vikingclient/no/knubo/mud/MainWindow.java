@@ -57,7 +57,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 */
 	Object doclock = new Object();
 
-	private JTextArea textInput;
+	JTextArea textInput;
 
 	JMenuItem guestLogin;
 
@@ -69,7 +69,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	CommunicationThread communicationThread;
 
-	private History history;
+	History history;
 
 	/**
 	 * Setup stuff.
@@ -170,21 +170,34 @@ public class MainWindow extends JApplet implements MenuTopics {
 	private JMenu createHistoryMenu() {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-			}
+				JMenuItem item = (JMenuItem) e.getSource();
+				
+				final String choice = item.getText();
+				
+				if(choice.equals(HISTORY_NEXT_COMMAND)) {
+					textInput.setText(history.next());
+				} else if(choice.equals(HISTORY_PREVIOUS_COMMAND)) {
+					textInput.setText(history.previous());					
+				} else if(choice.equals(HISTORY_SHOW_ALL)) {
+					textPane.appendPlain(history.allHistory(), Color.WHITE);
+				}
+ 			}
 		};
 
 		JMenu menu = new JMenu("History");
 
 		JMenuItem item = new JMenuItem(HISTORY_PREVIOUS_COMMAND);
+		item.addActionListener(actionListener);
 		menu.add(item);
 
 		item = new JMenuItem(HISTORY_NEXT_COMMAND);
+		item.addActionListener(actionListener);
 		menu.add(item);
 
 		menu.add(new JSeparator());
 
 		item = new JMenuItem(HISTORY_SHOW_ALL);
+		item.addActionListener(actionListener);
 		menu.add(item);
 
 		return menu;

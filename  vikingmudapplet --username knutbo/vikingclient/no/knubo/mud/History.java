@@ -1,97 +1,51 @@
 package no.knubo.mud;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.ListIterator;
 
 class History {
 	private static final int MAX_HISTORY = 100;
-	String[] history = new String[MAX_HISTORY];
-	int pos;
-	int historypos;
-	boolean wrapped = false;
-	boolean first = false;
+
+	private LinkedList history = new LinkedList();
+	private ListIterator iterator;
 
 	void addHistroy(String command) {
-		/* Do not recall similar commands repeated. */
-		if (history[pos] != null && history[pos].equals(command)) {
-			historypos = pos;
-			first = false;
+
+
+		/* Don't keep adding similar entries or blanks */
+		if (command.trim().length() == 0
+				|| (history.size() > 0 && history.getLast().equals(command))) {
+			iterator = history.listIterator();
 			return;
 		}
 
-		history[++pos] = command;
-		if (pos >= MAX_HISTORY) {
-			pos = 0;
+		history.addFirst(command);
+
+		if (history.size() > MAX_HISTORY) {
+			history.removeLast();
 		}
-		historypos = pos;
-		first = false;
-	}
-
-	String previous() {
-
-		if (!first) {
-			first = true;
-			return history[historypos];
-		}
-
-		final int maxpos = MAX_HISTORY - 1;
-
-		/* Check if we can wrap */
-		if ((historypos - 1) < 0 && history[maxpos] == null) {
-			first = false;
-			return "";
-		}
-
-		/* Okay we can wrap if we need to, so we go ahead */
-		historypos--;
-
-		if (wrapped && historypos < (pos + 1)) {
-			return history[pos + 1];
-		}
-
-		if (historypos < 0) {
-			historypos = maxpos;
-			wrapped = true;
-		}
-
-		return history[historypos];
+		iterator = history.listIterator();
 	}
 
 	String next() {
-		if (!first) {
-			first = true;
-			return history[historypos];
+		if (iterator.hasPrevious()) {
+			return iterator.previous().toString();
 		}
+		return "";
+	}
 
-		/*
-		 * Check if There is still somethign to show. If not written yet we
-		 * don't display anything.
-		 */
-		if ((historypos + 1) < MAX_HISTORY && history[historypos + 1] == null) {
-			first = false;
-			return "";
+	String previous() {
+		if (iterator.hasNext()) {
+			return iterator.next().toString();
 		}
-
-		historypos++;
-
-		if (historypos > pos && !wrapped) {
-			historypos = pos;
-		}
-		if (historypos >= MAX_HISTORY || history[historypos] == null) {
-			historypos = 0;
-			wrapped = false;
-		}
-
-		return history[historypos];
+		return "";
 	}
 
 	public String allHistory() {
-		LinkedList toShow = new LinkedList();
-		
-		for (int i = 0; i < history.length; i++) {
-			if(history[i] != null) {
-				toShow.add(history[i]);
-			}
-		}
-		return "Recorded history:\n"+toShow.toString();
+		ArrayList res = new ArrayList(history);
+		Collections.reverse(res);
+		return "Recorded history:\n" + res.toString();
 	}
 }

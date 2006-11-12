@@ -290,13 +290,34 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		switch (arg0.getKeyChar()) {
 			case '\n' :
+
 				history.addHistroy(raw);
-				vikingOut.print(toSend);
-				textfield.setText("");
 				textPane.appendPlain(toSend, Color.white);
+
+				String[] reps = calcReps(raw);
+
+				for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
+					vikingOut.print(reps[0]+"\n");
+					textfield.setText("");
+				}
+
 				return;
 		}
 
+	}
+
+	private String[] calcReps(String raw) {
+		if (!raw.startsWith("#") || raw.length() < 4) {
+			return new String[]{raw, "1"};
+		}
+
+		char count = raw.charAt(1);
+
+		if (!Character.isDigit(count)) {
+			return new String[]{raw, "1"};
+		}
+
+		return new String[]{raw.substring(2).trim(), String.valueOf(count)};
 	}
 
 	public void doAction(String action) {

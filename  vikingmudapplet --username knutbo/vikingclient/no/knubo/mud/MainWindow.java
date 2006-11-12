@@ -70,6 +70,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	History history;
 
+	JMenuItem clearWindow;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -80,18 +82,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textPane.setMargin(new Insets(5, 5, 5, 5));
 		textPane.setFont(new Font("Courier", Font.PLAIN, 14));
 
-		textPane.addKeyListener(new KeyAdapter() {
-
-			public void keyPressed(KeyEvent e) {
-				e.consume();
-			}
-			public void keyTyped(KeyEvent e) {
-				e.consume();
-			}
-
-		});
-
-		textPane.append(Color.YELLOW, About.mainText(),
+		textPane.append(Color.YELLOW, About.greetingText(),
 
 		true, false, false);
 		textPane.setBackground(Color.BLACK);
@@ -142,6 +133,24 @@ public class MainWindow extends JApplet implements MenuTopics {
 		mb.add(createHistoryMenu());
 		mb.add(createHelpMenu());
 		setJMenuBar(mb);
+
+		textPane.addKeyListener(new KeyAdapter() {
+
+			public void keyTyped(KeyEvent e) {
+				if (e.isActionKey()) {
+					return;
+				}
+
+				if (e.isMetaDown() && e.getKeyChar() == 'c') {
+					return;
+				}
+
+				textInput.requestFocus();
+				textInput.append(String.valueOf(e.getKeyChar()));
+				e.consume();
+			}
+
+		});
 
 		setBounds(0, 0, textPane.getMinimumSize().width + 40, 540);
 		// put it all together and show it.
@@ -221,6 +230,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 					if (communicationThread != null) {
 						communicationThread.doAction("!quit");
 					}
+				} else if (e.getSource() == clearWindow) {
+					textPane.setText("");
 				}
 			}
 		};
@@ -232,6 +243,14 @@ public class MainWindow extends JApplet implements MenuTopics {
 		plainLogin = new JMenuItem("Just login");
 		plainLogin.addActionListener(actionListener);
 		menu.add(plainLogin);
+
+		menu.add(new JSeparator());
+
+		clearWindow = new JMenuItem("Clear window");
+		clearWindow.addActionListener(actionListener);
+		menu.add(clearWindow);
+
+		menu.add(new JSeparator());
 		loggOff = new JMenuItem("Logg off");
 		loggOff.addActionListener(actionListener);
 		menu.add(loggOff);
@@ -248,7 +267,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				textPane.appendPlain("\n", Color.white);
 
 				if (item.getText().equals(HELP_ABOUT)) {
-					textPane.appendPlain(About.getText(), Color.YELLOW);
+					textPane.appendPlain(About.aboutInfo(), Color.YELLOW);
 				} else if (item.getText().equals(HELP_GETTING_STARTED)) {
 					if (communicationThread != null) {
 						communicationThread.doAction("!help");
@@ -263,11 +282,17 @@ public class MainWindow extends JApplet implements MenuTopics {
 						textPane.appendPlain("You need to connect first.\n",
 								Color.YELLOW);
 					}
+				} else if(item.getText().equals(HELP_CLIENT)) {
+					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
 				}
 			}
 		};
 
-		JMenuItem item = new JMenuItem(HELP_GETTING_STARTED);
+		JMenuItem item = new JMenuItem(HELP_CLIENT);
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem(HELP_GETTING_STARTED);
 		item.addActionListener(actionListener);
 		menu.add(item);
 

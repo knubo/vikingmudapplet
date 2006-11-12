@@ -96,7 +96,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		// specify the initial size and location for the window.
 		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
-		scrollPane.setMinimumSize(new Dimension(width, 360));
+		scrollPane.setMinimumSize(new Dimension(width, 200));
 		setLocation(50, 50);
 
 		GridBagLayout gbl = new GridBagLayout();
@@ -109,7 +109,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		displayConstraints.gridwidth = 1;
 		displayConstraints.gridheight = 1;
 		displayConstraints.fill = GridBagConstraints.BOTH;
-		displayConstraints.weighty = 0.7;
+		displayConstraints.weighty = 1;
 		gbl.setConstraints(scrollPane, displayConstraints);
 		add(scrollPane);
 
@@ -118,10 +118,15 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textInput.setForeground(Color.WHITE);
 
 		JScrollPane textPanel = new JScrollPane(textInput);
+		int inputHeight = (int) ((textInput.getFontMetrics(textInput.getFont())
+				.getHeight()) * 2.5);
+		textPanel
+				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
+
 		textInput.setLineWrap(true);
 		textInput.setCaretColor(Color.WHITE);
 		displayConstraints.gridy = 1;
-		displayConstraints.weighty = 0.3;
+		displayConstraints.weighty = 0;
 		// displayConstraints.fill = GridBagConstraints.BOTH;
 
 		gbl.setConstraints(textPanel, displayConstraints);
@@ -156,7 +161,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 		// put it all together and show it.
 		setVisible(true);
 	}
-
 	public boolean login() {
 
 		if (theThread != null && theThread.isAlive()) {
@@ -282,7 +286,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 						textPane.appendPlain("You need to connect first.\n",
 								Color.YELLOW);
 					}
-				} else if(item.getText().equals(HELP_CLIENT)) {
+				} else if (item.getText().equals(HELP_CLIENT)) {
 					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
 				}
 			}

@@ -9,5 +9,4 @@ public interface MenuTopics {
 	String HISTORY_SHOW_ALL = "Show history";
 	String HISTORY_NEXT_COMMAND = "Next command (arrow up)";
 	String HISTORY_PREVIOUS_COMMAND = "Previous command (arrow up)";
-
 }

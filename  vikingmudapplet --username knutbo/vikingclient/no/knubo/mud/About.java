@@ -14,17 +14,31 @@ class About {
 	}
 	public static String greetingText() {
 		return "==========================================\n"
-				+ "Viking Mud Online Client 0.9.1\n"
+				+ "Viking Mud Online Client 0.9\n"
 				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
 				+ "==========================================\n";
 	}
 
 	public static String aboutInfo() {
 		return greetingText()
-				+ "This code is released under the Gnu Public Lisence version 2 as described by "
+				+ "\nThis code is released under the Gnu Public Lisence version 2 as described by "
 				+ "http://www.gnu.org/licenses/gpl.txt.\n"
 				+ "The code is hosted by Google Code at "
 				+ "http://code.google.com/p/vikingmudapplet/ for your pleasure."
-				+ "\n";
+				+ "\n" + changes();
+	}
+
+	public static String changes() {
+		return "\nChange history:\n"
+				+ "0.10 Added showing of current font in menu (also for other fonts if you have done so).\n"
+				+ "0.9 Added applet parameter FONT_NAME and FONT_SIZE. Font size must be an integer.\n"
+				+ "0.8 Changed font to Courier New on request.\n"
+				+ "0.7 Added discard of first two commands to history when connecting. Renumbered version numbers\n"
+				+ "0.6 Started tracking changes in about.\n"
+				+ "0.5 Added some more documentation.\n"
+				+ "0.4 Added font size change.\n"
+				+ "0.3 Added command repeats.\n"
+				+ "0.2 Added history. Removed telnet noise upon login.\n"
+				+ "0.1 Created applet.";
 	}
 }

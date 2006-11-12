@@ -1,11 +1,13 @@
 package no.knubo.mud;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.TextArea;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -52,6 +54,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	JMenuItem clearWindow;
 
+	private int fontSize;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -60,11 +64,10 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		textPane = new ColorPane();
 		textPane.setMargin(new Insets(5, 5, 5, 5));
-		textPane.setFont(new Font("Courier", Font.PLAIN, 14));
+		fontSize = getFontSize();
+		textPane.setFont(new Font(getFontName(), Font.PLAIN, fontSize));
 
-		textPane.append(Color.YELLOW, About.greetingText(),
-
-		true, false, false);
+		textPane.append(Color.YELLOW, About.greetingText(), true, false, false);
 		textPane.setBackground(Color.BLACK);
 		textPane.setForeground(Color.WHITE);
 
@@ -74,7 +77,14 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		scrollPane.setAutoscrolls(true);
 
-		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
+		Font sizeFont = null;
+		if (fontSize < 14) {
+			sizeFont = new Font(getFontName(), Font.PLAIN, 14);
+		} else {
+			sizeFont = textPane.getFont();
+		}
+
+		int width = textPane.getFontMetrics(sizeFont).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
 		setLocation(50, 50);
 
@@ -139,6 +149,38 @@ public class MainWindow extends JApplet implements MenuTopics {
 		// put it all together and show it.
 		setVisible(true);
 	}
+	private String getFontName() {
+		try {
+			String value = getParameter("FONT_NAME");
+
+			if (value != null) {
+				return value;
+			}
+			return "Courier New";
+		} catch (Exception e) {
+			textPane.appendPlain(e.getMessage(), Color.RED);
+			e.printStackTrace();
+			return "Courier New";
+		}
+	}
+	private int getFontSize() {
+		try {
+			String value = getParameter("FONT_SIZE");
+
+			if (value == null) {
+				return 14;
+			}
+			try {
+				return Integer.parseInt(value);
+			} catch (NumberFormatException e) {
+				return 14;
+			}
+		} catch (Exception e) {
+			textPane.appendPlain(e.getMessage(), Color.RED);
+			e.printStackTrace();
+			return 14;
+		}
+	}
 	public boolean login() {
 
 		if (theThread != null && theThread.isAlive()) {
@@ -193,18 +235,32 @@ public class MainWindow extends JApplet implements MenuTopics {
 		return menu;
 	}
 
+	void clearBackgroundsFromMenu(final JMenu menu) {
+		Component[] menuComponents = menu.getMenuComponents();
+
+		for (int i = 0; i < menuComponents.length; i++) {
+			Component component = menuComponents[i];
+			component.setBackground(Color.WHITE);
+		}
+	}
 	private JMenu createFontMenu() {
+		final JMenu menu = new JMenu("Font");
+
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
-				
-				String size = item.getText().substring(0,2).trim();
-				textPane.setFont(new Font("Courier", Font.PLAIN, Integer.parseInt(size)));
 
+				clearBackgroundsFromMenu(menu);
+
+				String size = item.getText().substring(0, 2).trim();
+				int sizeInt = Integer.parseInt(size);
+
+				item.setBackground(Color.YELLOW);
+
+				textPane.setFont(new Font("Courier", Font.PLAIN, sizeInt));
 			}
-		};
 
-		JMenu menu = new JMenu("Font");
+		};
 
 		JMenuItem item = new JMenuItem(" 8 pt");
 		item.addActionListener(actionListener);
@@ -220,6 +276,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		item = new JMenuItem("14 pt");
 		item.addActionListener(actionListener);
+		item.setBackground(Color.YELLOW);
 		menu.add(item);
 
 		item = new JMenuItem("16 pt");
@@ -229,6 +286,20 @@ public class MainWindow extends JApplet implements MenuTopics {
 		item = new JMenuItem("18 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
+
+		if (fontSize != 14) {
+			String point;
+			if (fontSize < 10) {
+				point = " " + fontSize;
+			} else {
+				point = String.valueOf(fontSize);
+			}
+			clearBackgroundsFromMenu(menu);
+			item = new JMenuItem(point + "pt (custom)");
+			item.addActionListener(actionListener);
+			item.setBackground(Color.YELLOW);
+			menu.add(item);
+		}
 
 		return menu;
 	}
@@ -247,6 +318,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 						communicationThread.loginGuest();
 					}
 				} else if (e.getSource() == plainLogin) {
+					history.init_discard_count();
 					login();
 				} else if (e.getSource() == loggOff) {
 					if (communicationThread != null) {

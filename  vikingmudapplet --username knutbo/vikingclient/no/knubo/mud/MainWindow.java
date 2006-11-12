@@ -1,22 +1,3 @@
-/*
- * A simple text editor that demonstrates the integration of the 
- * com.Ostermiller.Syntax Syntax Highlighting package with a text editor.
- * Copyright (C) 2001 Stephen Ostermiller 
- * http://ostermiller.org/contact.pl?regarding=Syntax+Highlighting
- *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * See COPYING.TXT for details.
- */
-
 package no.knubo.mud;
 
 import java.awt.Color;
@@ -40,8 +21,7 @@ import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 
 /**
- * A <a href="http://ostermiller.org/syntax/editor.html">demonstration text
- * editor</a> that uses syntax highlighting.
+ * Main code for the applet window. Sets up window stuff.
  */
 public class MainWindow extends JApplet implements MenuTopics {
 
@@ -94,13 +74,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		scrollPane.setAutoscrolls(true);
 
-		// specify the initial size and location for the window.
 		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
 		setLocation(50, 50);
 
 		GridBagLayout gbl = new GridBagLayout();
-		// Add the components to the frame.
 		setLayout(gbl);
 
 		GridBagConstraints displayConstraints = new GridBagConstraints();
@@ -127,7 +105,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textInput.setCaretColor(Color.WHITE);
 		displayConstraints.gridy = 1;
 		displayConstraints.weighty = 0;
-		// displayConstraints.fill = GridBagConstraints.BOTH;
 
 		gbl.setConstraints(textPanel, displayConstraints);
 		add(textPanel);

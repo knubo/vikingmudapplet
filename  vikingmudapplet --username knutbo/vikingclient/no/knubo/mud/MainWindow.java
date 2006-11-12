@@ -111,6 +111,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
 
 		textInput.setLineWrap(true);
+		textInput.setFont(textPane.getFont());
 		textInput.setCaretColor(Color.WHITE);
 		displayConstraints.gridy = 1;
 		displayConstraints.weighty = 0;
@@ -148,7 +149,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		// put it all together and show it.
 		setVisible(true);
 	}
-	private String getFontName() {
+	String getFontName() {
 		try {
 			String value = getParameter("FONT_NAME");
 
@@ -256,7 +257,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 				item.setBackground(Color.YELLOW);
 
-				textPane.setFont(new Font("Courier", Font.PLAIN, sizeInt));
+				textPane.setFont(new Font(getFontName(), Font.PLAIN, sizeInt));
+				textInput.setFont(textPane.getFont());
 			}
 
 		};

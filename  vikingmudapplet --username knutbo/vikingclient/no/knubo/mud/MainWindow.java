@@ -112,6 +112,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		// Set up the menu bar.
 		JMenuBar mb = new JMenuBar();
 		mb.add(createGameMenu());
+		mb.add(createFontMenu());
 		mb.add(createHistoryMenu());
 		mb.add(createHelpMenu());
 		setJMenuBar(mb);
@@ -186,6 +187,46 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menu.add(new JSeparator());
 
 		item = new JMenuItem(HISTORY_SHOW_ALL);
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		return menu;
+	}
+
+	private JMenu createFontMenu() {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
+				
+				String size = item.getText().substring(0,2).trim();
+				textPane.setFont(new Font("Courier", Font.PLAIN, Integer.parseInt(size)));
+
+			}
+		};
+
+		JMenu menu = new JMenu("Font");
+
+		JMenuItem item = new JMenuItem(" 8 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem("10 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem("12 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem("14 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem("16 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		item = new JMenuItem("18 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
 

@@ -255,7 +255,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				String size = item.getText().substring(0, 2).trim();
 				int sizeInt = Integer.parseInt(size);
 
-				item.setBackground(Color.YELLOW);
+				item.setBackground(Color.LIGHT_GRAY);
 
 				textPane.setFont(new Font(getFontName(), Font.PLAIN, sizeInt));
 				textInput.setFont(textPane.getFont());
@@ -277,7 +277,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		item = new JMenuItem("14 pt");
 		item.addActionListener(actionListener);
-		item.setBackground(Color.YELLOW);
+		item.setBackground(Color.LIGHT_GRAY);
 		menu.add(item);
 
 		item = new JMenuItem("16 pt");
@@ -298,7 +298,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 			clearBackgroundsFromMenu(menu);
 			item = new JMenuItem(point + "pt (custom)");
 			item.addActionListener(actionListener);
-			item.setBackground(Color.YELLOW);
+			item.setBackground(Color.LIGHT_GRAY);
 			menu.add(item);
 		}
 

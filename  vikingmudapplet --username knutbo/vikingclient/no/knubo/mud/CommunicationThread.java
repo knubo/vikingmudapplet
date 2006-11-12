@@ -113,6 +113,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		} catch (IOException e) {
 			textPane.setText(e.getMessage());
 		}
+		textPane.appendPlain("Connection to mud closed.\n", Color.WHITE);
 		System.out.println("Socket loop ended");
 	}
 
@@ -318,7 +319,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		return false;
 	}
 	private String[] calcReps(String raw) {
-		if (!raw.startsWith("#") || raw.length() < 4) {
+		if (!raw.startsWith("#") || raw.length() < 3) {
 			return new String[]{raw, "1"};
 		}
 

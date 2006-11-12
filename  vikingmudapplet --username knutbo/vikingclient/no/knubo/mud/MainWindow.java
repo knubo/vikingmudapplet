@@ -13,6 +13,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
 import javax.swing.JApplet;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -25,6 +26,8 @@ import javax.swing.ScrollPaneConstants;
  * Main code for the applet window. Sets up window stuff.
  */
 public class MainWindow extends JApplet implements MenuTopics {
+
+	private static final int DEFALT_FONT_SIZE = 12;
 
 	/**
 	 * The place where the text is drawn.
@@ -77,8 +80,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 		scrollPane.setAutoscrolls(true);
 
 		Font sizeFont = null;
-		if (fontSize < 14) {
-			sizeFont = new Font(getFontName(), Font.PLAIN, 14);
+		if (fontSize < DEFALT_FONT_SIZE) {
+			sizeFont = new Font(getFontName(), Font.PLAIN, DEFALT_FONT_SIZE);
 		} else {
 			sizeFont = textPane.getFont();
 		}
@@ -168,17 +171,17 @@ public class MainWindow extends JApplet implements MenuTopics {
 			String value = getParameter("FONT_SIZE");
 
 			if (value == null) {
-				return 14;
+				return DEFALT_FONT_SIZE;
 			}
 			try {
 				return Integer.parseInt(value);
 			} catch (NumberFormatException e) {
-				return 14;
+				return DEFALT_FONT_SIZE;
 			}
 		} catch (Exception e) {
 			textPane.appendPlain(e.getMessage(), Color.RED);
 			e.printStackTrace();
-			return 14;
+			return DEFALT_FONT_SIZE;
 		}
 	}
 	public boolean login() {
@@ -235,12 +238,12 @@ public class MainWindow extends JApplet implements MenuTopics {
 		return menu;
 	}
 
-	void clearBackgroundsFromMenu(final JMenu menu) {
+	void clearSelections(final JMenu menu) {
 		Component[] menuComponents = menu.getMenuComponents();
 
 		for (int i = 0; i < menuComponents.length; i++) {
-			Component component = menuComponents[i];
-			component.setBackground(Color.WHITE);
+			JCheckBoxMenuItem component = (JCheckBoxMenuItem) menuComponents[i];
+			component.setSelected(false);
 		}
 	}
 	private JMenu createFontMenu() {
@@ -250,12 +253,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
 
-				clearBackgroundsFromMenu(menu);
+				clearSelections(menu);
 
+				item.setSelected(true);
 				String size = item.getText().substring(0, 2).trim();
 				int sizeInt = Integer.parseInt(size);
-
-				item.setBackground(Color.LIGHT_GRAY);
 
 				textPane.setFont(new Font(getFontName(), Font.PLAIN, sizeInt));
 				textInput.setFont(textPane.getFont());
@@ -263,42 +265,42 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		};
 
-		JMenuItem item = new JMenuItem(" 8 pt");
+		JMenuItem item = new JCheckBoxMenuItem(" 8 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
 
-		item = new JMenuItem("10 pt");
+		item = new JCheckBoxMenuItem("10 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
 
-		item = new JMenuItem("12 pt");
+		item = new JCheckBoxMenuItem("12 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
 
-		item = new JMenuItem("14 pt");
+		item = new JCheckBoxMenuItem("14 pt");
 		item.addActionListener(actionListener);
-		item.setBackground(Color.LIGHT_GRAY);
+		item.setSelected(true);
 		menu.add(item);
 
-		item = new JMenuItem("16 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
-
-		item = new JMenuItem("18 pt");
+		item = new JCheckBoxMenuItem("16 pt");
 		item.addActionListener(actionListener);
 		menu.add(item);
 
-		if (fontSize != 14) {
+		item = new JCheckBoxMenuItem("18 pt");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		if (fontSize != DEFALT_FONT_SIZE) {
 			String point;
 			if (fontSize < 10) {
 				point = " " + fontSize;
 			} else {
 				point = String.valueOf(fontSize);
 			}
-			clearBackgroundsFromMenu(menu);
-			item = new JMenuItem(point + "pt (custom)");
+			clearSelections(menu);
+			item = new JCheckBoxMenuItem(point + "pt (custom)");
 			item.addActionListener(actionListener);
-			item.setBackground(Color.LIGHT_GRAY);
+			item.setSelected(true);
 			menu.add(item);
 		}
 

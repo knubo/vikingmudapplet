@@ -14,7 +14,7 @@ class About {
 	}
 	public static String greetingText() {
 		return "==========================================\n"
-				+ "Viking Mud Online Client 0.9.\n"
+				+ "Viking Mud Online Client 0.9.1\n"
 				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
 				+ "==========================================\n";
 	}

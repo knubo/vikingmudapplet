@@ -290,6 +290,10 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		switch (arg0.getKeyChar()) {
 			case '\n' :
+				if (doClientAction(raw)) {
+					textfield.setText("");
+					return;
+				}
 
 				history.addHistroy(raw);
 				textPane.appendPlain(toSend, Color.white);
@@ -297,7 +301,7 @@ class CommunicationThread implements Runnable, KeyListener {
 				String[] reps = calcReps(raw);
 
 				for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
-					vikingOut.print(reps[0]+"\n");
+					vikingOut.print(reps[0] + "\n");
 					textfield.setText("");
 				}
 
@@ -306,6 +310,13 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	}
 
+	private boolean doClientAction(String raw) {
+		if (raw.equals("#history")) {
+			textPane.appendPlain(history.allHistory(), Color.WHITE);
+			return true;
+		}
+		return false;
+	}
 	private String[] calcReps(String raw) {
 		if (!raw.startsWith("#") || raw.length() < 4) {
 			return new String[]{raw, "1"};

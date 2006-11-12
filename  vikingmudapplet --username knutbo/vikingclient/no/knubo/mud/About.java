@@ -6,15 +6,17 @@ class About {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
 				+ "a new character. Game commands are sent in the text field in the bottom.\n\n"
-				+ "The input field support history accessible by the arrow keys. It also supports repeat"
-				+ "of commands like #3 smile, which will make you smile 3 times.";
+				+ "The input field support history accessible by the arrow keys. "
+				+ "Command history is also available by sending the command #history. "
+				+ "Repeats are supported by sending a "
+				+ "command like '#3 smile', which will make you smile 3 times.";
 
 	}
 	public static String greetingText() {
-		return "=================================\n"
+		return "==========================================\n"
 				+ "Viking Mud Online Client 0.9.\n"
-				+ "Created by knutbo@ifi.uio.no\n"
-				+ "=================================\n";
+				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
+				+ "==========================================\n";
 	}
 
 	public static String aboutInfo() {

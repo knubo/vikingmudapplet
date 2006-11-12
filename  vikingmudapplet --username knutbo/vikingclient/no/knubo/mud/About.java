@@ -31,7 +31,7 @@ class About {
 	public static String changes() {
 		return "\nChange history:\n"
 				+ LATEST
-				+ " Same font for input area as for textarea.\n"
+				+ " Same font for input area as for textarea. Changed font for menu.\n"
 				+ "0.10 Added showing of current font in menu (also for other fonts if you have done so).\n"
 				+ "0.9 Added applet parameter FONT_NAME and FONT_SIZE. Font size must be an integer.\n"
 				+ "0.8 Changed font to Courier New on request.\n"

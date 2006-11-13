@@ -28,6 +28,8 @@ import javax.swing.UIManager;
  */
 public class MainWindow extends JApplet implements MenuTopics {
 
+	private static final String COURIER_NEW = "Courier New";
+
 	private static final int DEFALT_FONT_SIZE = 12;
 
 	/**
@@ -59,6 +61,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	private int fontSize;
 
+	private String chosenFont;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -85,14 +89,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		scrollPane.setAutoscrolls(true);
 
-		Font sizeFont = null;
-		if (fontSize < DEFALT_FONT_SIZE) {
-			sizeFont = new Font(getFontName(), Font.PLAIN, DEFALT_FONT_SIZE);
-		} else {
-			sizeFont = textPane.getFont();
-		}
-
-		int width = textPane.getFontMetrics(sizeFont).charWidth('X') * 90;
+		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
 
 		GridBagLayout gbl = new GridBagLayout();
@@ -165,16 +162,22 @@ public class MainWindow extends JApplet implements MenuTopics {
 	}
 	String getFontName() {
 		try {
+			if (chosenFont != null) {
+				return chosenFont;
+			}
 			String value = getParameter("FONT_NAME");
 
 			if (value != null) {
+				chosenFont = value;
 				return value;
 			}
-			return "Courier New";
+			chosenFont = COURIER_NEW;
+			return COURIER_NEW;
 		} catch (Exception e) {
 			textPane.appendPlain(e.getMessage(), Color.RED);
 			e.printStackTrace();
-			return "Courier New";
+			chosenFont = COURIER_NEW;
+			return COURIER_NEW;
 		}
 	}
 	private int getFontSize() {
@@ -260,11 +263,16 @@ public class MainWindow extends JApplet implements MenuTopics {
 	private JMenu createFontMenu() {
 		final JMenu menu = new JMenu("Font");
 
+		final JMenu familymenu = new JMenu("Family");
+		final JMenu sizemenu = new JMenu("Size");
+		menu.add(familymenu);
+		menu.add(sizemenu);
+
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
 
-				clearSelections(menu);
+				clearSelections(sizemenu);
 
 				item.setSelected(true);
 				String size = item.getText().substring(0, 2).trim();
@@ -276,30 +284,18 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		};
 
-		JMenuItem item = new JCheckBoxMenuItem(" 8 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
+		String[] choices = {" 8pt", "10 pt", "12 pt", "14 pt", "16 pt", "18 pt"};
 
-		item = new JCheckBoxMenuItem("10 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
+		for (int i = 0; i < choices.length; i++) {
+			String size = choices[i];
 
-		item = new JCheckBoxMenuItem("12 pt");
-		item.addActionListener(actionListener);
-		item.setSelected(true);
-		menu.add(item);
-
-		item = new JCheckBoxMenuItem("14 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
-
-		item = new JCheckBoxMenuItem("16 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
-
-		item = new JCheckBoxMenuItem("18 pt");
-		item.addActionListener(actionListener);
-		menu.add(item);
+			JMenuItem item = new JCheckBoxMenuItem(size);
+			item.addActionListener(actionListener);
+			if (i == 2) {
+				item.setSelected(true);
+			}
+			sizemenu.add(item);
+		}
 
 		if (fontSize != DEFALT_FONT_SIZE) {
 			String point;
@@ -308,11 +304,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 			} else {
 				point = String.valueOf(fontSize);
 			}
-			clearSelections(menu);
-			item = new JCheckBoxMenuItem(point + "pt (custom)");
+			clearSelections(sizemenu);
+			JMenuItem item = new JCheckBoxMenuItem(point + "pt (custom)");
 			item.addActionListener(actionListener);
 			item.setSelected(true);
-			menu.add(item);
+			sizemenu.add(item);
 		}
 
 		return menu;
@@ -392,6 +388,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 					}
 				} else if (item.getText().equals(HELP_CLIENT)) {
 					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
+				} else if (item.getText().equals(HELP_CHANGES)) {
+					textPane.appendPlain(About.changes(), Color.YELLOW);
 				}
 			}
 		};
@@ -405,6 +403,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menu.add(item);
 
 		item = new JMenuItem(HELP_TOPICS);
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+
+		item = new JMenuItem(HELP_CHANGES);
 		item.addActionListener(actionListener);
 		menu.add(item);
 

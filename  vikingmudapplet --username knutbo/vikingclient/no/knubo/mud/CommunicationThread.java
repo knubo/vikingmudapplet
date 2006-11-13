@@ -285,16 +285,11 @@ class CommunicationThread implements Runnable, KeyListener {
 	}
 
 	public void keyReleased(KeyEvent arg0) {
-		/* Not used yet */
-
-	}
-
-	public void keyTyped(KeyEvent arg0) {
 		JTextArea textfield = (JTextArea) arg0.getComponent();
 
 		/* ctrl -e */
 		if ((arg0.isControlDown() || arg0.isMetaDown())
-				&& arg0.getKeyChar() == 'e') {
+				&& arg0.getKeyCode() == KeyEvent.VK_E) {
 			textfield.setCaretPosition(textfield.getText().length());
 			arg0.consume();
 			return;
@@ -302,14 +297,18 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		/* ctrl -a */
 		if ((arg0.isControlDown() || arg0.isMetaDown())
-				&& arg0.getKeyChar() == 'a') {
+				&& arg0.getKeyCode() == KeyEvent.VK_A) {
 			textfield.setCaretPosition(0);
 			arg0.consume();
 			return;
 		}
+		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_K) {
+			textfield.setText(textfield.getText().substring(0,
+					textfield.getCaretPosition()));
+		}
 
 		/* ctrl-p */
-		if (arg0.isControlDown() && arg0.getKeyChar() =='p') {
+		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_P) {
 			textfield.setText(history.previous());
 			arg0.consume();
 			return;
@@ -317,11 +316,16 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		/* ctrl-n */
 
-		if (arg0.isControlDown() && arg0.getKeyChar() == 'n') {
+		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_N) {
 			textfield.setText(history.next());
 			arg0.consume();
 			return;
 		}
+
+	}
+
+	public void keyTyped(KeyEvent arg0) {
+		JTextArea textfield = (JTextArea) arg0.getComponent();
 
 		String raw = textfield.getText().replaceAll("\n", "");
 		String toSend = raw + "\n";

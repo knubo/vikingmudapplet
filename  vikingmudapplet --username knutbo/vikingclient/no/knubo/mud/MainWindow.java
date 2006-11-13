@@ -67,6 +67,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	String chosenFont;
 
+	Aliases aliasFrame;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -77,6 +79,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		UIManager.put("CheckBoxMenuItem.font", menuFont);
 
 		history = new History();
+		aliasFrame = new Aliases();
 
 		textPane = new ColorPane();
 		textPane.setMargin(new Insets(5, 5, 5, 5));
@@ -124,6 +127,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		mb.add(createGameMenu());
 		mb.add(createFontMenu());
 		mb.add(createHistoryMenu());
+		mb.add(createAliasMenu());
 		mb.add(createHelpMenu());
 		setJMenuBar(mb);
 
@@ -210,7 +214,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
-					history);
+					history, this.aliasFrame);
 
 			this.textInput.addKeyListener(communicationThread);
 		}
@@ -218,6 +222,21 @@ public class MainWindow extends JApplet implements MenuTopics {
 		theThread.start();
 		this.textInput.requestFocus();
 		return true;
+	}
+
+	private JMenu createAliasMenu() {
+		JMenu menu = new JMenu("Aliases");
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				aliasFrame.setVisible(true);
+			}
+		};
+
+		JMenuItem item = new JMenuItem("Edit aliases");
+		item.addActionListener(actionListener);
+		menu.add(item);
+
+		return menu;
 	}
 
 	private JMenu createHistoryMenu() {

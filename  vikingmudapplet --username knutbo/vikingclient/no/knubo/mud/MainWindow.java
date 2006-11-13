@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -11,6 +13,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -59,9 +63,9 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	JMenuItem clearWindow;
 
-	private int fontSize;
+	int fontSize;
 
-	private String chosenFont;
+	String chosenFont;
 
 	/**
 	 * Setup stuff.
@@ -180,7 +184,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 			return COURIER_NEW;
 		}
 	}
-	private int getFontSize() {
+	int getFontSize() {
 		try {
 			String value = getParameter("FONT_SIZE");
 
@@ -268,6 +272,62 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menu.add(familymenu);
 		menu.add(sizemenu);
 
+		setupSizeMenu(sizemenu);
+		setupFamilyMenu(familymenu);
+
+		return menu;
+
+	}
+	private void setupFamilyMenu(final JMenu familymenu) {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
+
+				clearSelections(familymenu);
+
+				item.setSelected(true);
+				chosenFont = item.getText();
+				textPane.setFont(new Font(getFontName(), Font.PLAIN, fontSize));
+				textInput.setFont(textPane.getFont());
+			}
+		};
+
+		Font[] allFonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
+				.getAllFonts();
+
+		LinkedList names = new LinkedList();
+		for (int i = 0; i < allFonts.length; i++) {
+			Font f = allFonts[i];
+
+			f = f.deriveFont(15);
+			
+			/* Test if font is monospaced. */
+			FontMetrics fontMetrics = getFontMetrics(f);
+			
+			
+			int s1 = fontMetrics.stringWidth("/\\XX");
+			int s2 = fontMetrics.stringWidth("  ii");
+			if(s1 == 0 || s2 == 0 || s1 != s2) {
+				continue;
+			}
+			
+			names.add(f.getName());
+		}
+
+		for (Iterator i = names.iterator(); i.hasNext();) {
+			String name = (String) i.next();
+
+			JMenuItem item = new JCheckBoxMenuItem(name);
+			item.addActionListener(actionListener);
+			if (item.equals(chosenFont)) {
+				item.setSelected(true);
+			}
+			familymenu.add(item);
+		}
+
+	}
+
+	private void setupSizeMenu(final JMenu sizemenu) {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
@@ -276,12 +336,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 				item.setSelected(true);
 				String size = item.getText().substring(0, 2).trim();
-				int sizeInt = Integer.parseInt(size);
+				fontSize = Integer.parseInt(size);
 
-				textPane.setFont(new Font(getFontName(), Font.PLAIN, sizeInt));
+				textPane.setFont(new Font(getFontName(), Font.PLAIN, fontSize));
 				textInput.setFont(textPane.getFont());
 			}
-
 		};
 
 		String[] choices = {" 8pt", "10 pt", "12 pt", "14 pt", "16 pt", "18 pt"};
@@ -310,8 +369,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 			item.setSelected(true);
 			sizemenu.add(item);
 		}
-
-		return menu;
 	}
 
 	/**
@@ -405,7 +462,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 		item = new JMenuItem(HELP_TOPICS);
 		item.addActionListener(actionListener);
 		menu.add(item);
-
 
 		item = new JMenuItem(HELP_CHANGES);
 		item.addActionListener(actionListener);

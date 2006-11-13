@@ -292,6 +292,37 @@ class CommunicationThread implements Runnable, KeyListener {
 	public void keyTyped(KeyEvent arg0) {
 		JTextArea textfield = (JTextArea) arg0.getComponent();
 
+		/* ctrl -e */
+		if ((arg0.isControlDown() || arg0.isMetaDown())
+				&& arg0.getKeyChar() == 'e') {
+			textfield.setCaretPosition(textfield.getText().length());
+			arg0.consume();
+			return;
+		}
+
+		/* ctrl -a */
+		if ((arg0.isControlDown() || arg0.isMetaDown())
+				&& arg0.getKeyChar() == 'a') {
+			textfield.setCaretPosition(0);
+			arg0.consume();
+			return;
+		}
+
+		/* ctrl-p */
+		if (arg0.isControlDown() && arg0.getKeyChar() =='p') {
+			textfield.setText(history.previous());
+			arg0.consume();
+			return;
+		}
+
+		/* ctrl-n */
+
+		if (arg0.isControlDown() && arg0.getKeyChar() == 'n') {
+			textfield.setText(history.next());
+			arg0.consume();
+			return;
+		}
+
 		String raw = textfield.getText().replaceAll("\n", "");
 		String toSend = raw + "\n";
 
@@ -316,7 +347,6 @@ class CommunicationThread implements Runnable, KeyListener {
 		}
 
 	}
-
 	private boolean doClientAction(String raw) {
 		if (raw.equals("#history")) {
 			textPane.appendPlain(history.allHistory(), Color.WHITE);

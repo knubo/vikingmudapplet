@@ -110,18 +110,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		gbl.setConstraints(scrollPane, displayConstraints);
 		add(scrollPane);
 
-		textInput = new JTextArea(80, 4);
-		textInput.setBackground(Color.BLACK);
-		textInput.setForeground(Color.WHITE);
-
-		int inputHeight = (int) ((textInput.getFontMetrics(textInput.getFont())
-				.getHeight()) * 2.5);
-		textInput
-				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
-
-		textInput.setLineWrap(true);
-		textInput.setFont(textPane.getFont());
-		textInput.setCaretColor(Color.WHITE);
+		setupTextInput();
 		displayConstraints.gridy = 1;
 		displayConstraints.weightx = 0;
 		displayConstraints.weighty = 0;
@@ -158,6 +147,21 @@ public class MainWindow extends JApplet implements MenuTopics {
 		setBounds(0, 0, textPane.getMinimumSize().width + 40, 540);
 		// put it all together and show it.
 		setVisible(true);
+	}
+	private void setupTextInput() {
+		textInput = new JTextArea(80, 4);
+		textInput.setBackground(Color.BLACK);
+		textInput.setForeground(Color.WHITE);
+
+		int inputHeight = (int) ((textInput.getFontMetrics(textInput.getFont())
+				.getHeight()) * 2.5);
+		textInput
+				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
+
+		textInput.setLineWrap(true);
+		textInput.setFont(textPane.getFont());
+		textInput.setCaretColor(Color.WHITE);
+
 	}
 	String getFontName() {
 		try {
@@ -282,11 +286,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		item = new JCheckBoxMenuItem("12 pt");
 		item.addActionListener(actionListener);
+		item.setSelected(true);
 		menu.add(item);
 
 		item = new JCheckBoxMenuItem("14 pt");
 		item.addActionListener(actionListener);
-		item.setSelected(true);
 		menu.add(item);
 
 		item = new JCheckBoxMenuItem("16 pt");

@@ -260,10 +260,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 		Component[] menuComponents = menu.getMenuComponents();
 
 		for (int i = 0; i < menuComponents.length; i++) {
-			JCheckBoxMenuItem component = (JCheckBoxMenuItem) menuComponents[i];
+			JMenuItem component = (JMenuItem) menuComponents[i];
 			component.setSelected(false);
 		}
 	}
+
 	private JMenu createFontMenu() {
 		final JMenu menu = new JMenu("Font");
 
@@ -300,30 +301,31 @@ public class MainWindow extends JApplet implements MenuTopics {
 			Font f = allFonts[i];
 
 			f = f.deriveFont(15);
-			
+
 			/* Test if font is monospaced. */
 			FontMetrics fontMetrics = getFontMetrics(f);
-			
-			
+
 			int s1 = fontMetrics.stringWidth("/\\XX");
 			int s2 = fontMetrics.stringWidth("  ii");
-			if(s1 == 0 || s2 == 0 || s1 != s2) {
+			if (s1 == 0 || s2 == 0 || s1 != s2) {
 				continue;
 			}
-			
+
 			names.add(f.getName());
 		}
 
 		for (Iterator i = names.iterator(); i.hasNext();) {
 			String name = (String) i.next();
 
-			JMenuItem item = new JCheckBoxMenuItem(name);
+			JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
 			item.addActionListener(actionListener);
 			if (item.equals(chosenFont)) {
 				item.setSelected(true);
 			}
 			familymenu.add(item);
 		}
+		/* On request */
+		familymenu.add("Verdana");
 
 	}
 

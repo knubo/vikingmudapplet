@@ -302,13 +302,13 @@ class CommunicationThread implements Runnable, KeyListener {
 			arg0.consume();
 			return;
 		}
-		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_K) {
+		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_K) {
 			textfield.setText(textfield.getText().substring(0,
 					textfield.getCaretPosition()));
 		}
 
 		/* ctrl-p */
-		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_P) {
+		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_P) {
 			textfield.setText(history.previous());
 			arg0.consume();
 			return;
@@ -316,7 +316,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		/* ctrl-n */
 
-		if (arg0.isControlDown() && arg0.getKeyCode() ==  KeyEvent.VK_N) {
+		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_N) {
 			textfield.setText(history.next());
 			arg0.consume();
 			return;
@@ -340,11 +340,16 @@ class CommunicationThread implements Runnable, KeyListener {
 				history.addHistroy(raw);
 				textPane.appendPlain(toSend, Color.white);
 
-				String[] reps = calcReps(raw);
+				String[] actions = raw.split(";");
 
-				for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
-					vikingOut.print(reps[0] + "\n");
-					textfield.setText("");
+				for (int k = 0; k < actions.length; k++) {
+					String action = actions[k];
+					String[] reps = calcReps(action);
+
+					for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
+						vikingOut.print(reps[0] + "\n");
+						textfield.setText("");
+					}
 				}
 
 				return;

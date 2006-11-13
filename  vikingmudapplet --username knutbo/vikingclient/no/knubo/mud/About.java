@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.11";
+	final static String LATEST = "0.12";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -29,9 +29,11 @@ class About {
 	}
 
 	public static String changes() {
+
 		return "\nChange history:\n"
 				+ LATEST
-				+ " Same font for input area as for textarea. Changed font for menu.\n"
+				+ " Fixed colouring methods - simpler and correct now.\n"
+				+ "0.11 Same font for input area as for textarea. Changed font for menu.\n"
 				+ "0.10 Added showing of current font in menu (also for other fonts if you have done so).\n"
 				+ "0.9 Added applet parameter FONT_NAME and FONT_SIZE. Font size must be an integer.\n"
 				+ "0.8 Changed font to Courier New on request.\n"

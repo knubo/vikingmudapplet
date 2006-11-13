@@ -113,10 +113,9 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textInput.setBackground(Color.BLACK);
 		textInput.setForeground(Color.WHITE);
 
-		JScrollPane textPanel = new JScrollPane(textInput);
 		int inputHeight = (int) ((textInput.getFontMetrics(textInput.getFont())
 				.getHeight()) * 2.5);
-		textPanel
+		textInput
 				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
 
 		textInput.setLineWrap(true);
@@ -125,8 +124,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 		displayConstraints.gridy = 1;
 		displayConstraints.weighty = 0;
 
-		gbl.setConstraints(textPanel, displayConstraints);
-		add(textPanel);
+		gbl.setConstraints(textInput, displayConstraints);
+		add(textInput);
 
 		// Set up the menu bar.
 		JMenuBar mb = new JMenuBar();

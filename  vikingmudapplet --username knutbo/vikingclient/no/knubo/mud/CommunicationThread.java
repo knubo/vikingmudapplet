@@ -125,46 +125,13 @@ class CommunicationThread implements Runnable, KeyListener {
 			leftovers = null;
 		}
 
-		int mpos = -1;
-		int posBrac = 0;
-
-		while (posBrac >= 0 && mpos == -1) {
-
-			posBrac = fromServer.indexOf('[', posBrac);
-
-			if (posBrac == -1) {
-				addText(fromServer);
-				return;
-			}
-
-			mpos = fromServer.indexOf('m', posBrac);
-
-			if ((fromServer.length() - 1) > posBrac) {
-				int nextBrac = fromServer.indexOf('[', posBrac + 1);
-				if (nextBrac != -1 && nextBrac < mpos) {
-					posBrac = nextBrac;
-					mpos = -1;
-					continue;
-				}
-			}
-
-			/* Maybe a [ has sneaked itself in like [[...m */
-
-			if (mpos == -1 || mpos > (posBrac + 5)) {
-
-				/*
-				 * Maybe just a [ without a m? Then we look for next [ by
-				 * looping again.
-				 */
-				if ((fromServer.length() - posBrac) > 5) {
-					posBrac++;
-					mpos = -1;
-				} else {
-					leftovers = fromServer;
-					return;
-				}
-			}
+		int[] tmp = calcPosAndMpos(fromServer);
+		if (tmp == null) {
+			return;
 		}
+
+		int posBrac = tmp[0];
+		int mpos = tmp[1];
 
 		if (posBrac == -1) {
 			addText(fromServer);
@@ -223,6 +190,59 @@ class CommunicationThread implements Runnable, KeyListener {
 		visTekst(fromServer.substring(mpos + 1));
 		return;
 
+	}
+
+	/**
+	 * Finds start and stop of a color code using only match on [.
+	 * 
+	 * @param fromServer
+	 *            The string from server.
+	 * @return null if it found no color code or if we need more input to
+	 *         complet it. Normal case is array of 2 ints where first is start of brachet and
+	 *         next is ending m.
+	 */
+	private int[] calcPosAndMpos(String fromServer) {
+		int mpos = -1;
+		int posBrac = 0;
+
+		while (posBrac >= 0 && mpos == -1) {
+
+			posBrac = fromServer.indexOf('[', posBrac);
+
+			if (posBrac == -1) {
+				addText(fromServer);
+				return null;
+			}
+
+			mpos = fromServer.indexOf('m', posBrac);
+
+			if ((fromServer.length() - 1) > posBrac) {
+				int nextBrac = fromServer.indexOf('[', posBrac + 1);
+				if (nextBrac != -1 && nextBrac < mpos) {
+					posBrac = nextBrac;
+					mpos = -1;
+					continue;
+				}
+			}
+
+			/* Maybe a [ has sneaked itself in like [[...m */
+
+			if (mpos == -1 || mpos > (posBrac + 5)) {
+
+				/*
+				 * Maybe just a [ without a m? Then we look for next [ by
+				 * looping again.
+				 */
+				if ((fromServer.length() - posBrac) > 5) {
+					posBrac++;
+					mpos = -1;
+				} else {
+					leftovers = fromServer;
+					return null;
+				}
+			}
+		}
+		return new int[]{posBrac, mpos};
 	}
 
 	private void addText(String text) {

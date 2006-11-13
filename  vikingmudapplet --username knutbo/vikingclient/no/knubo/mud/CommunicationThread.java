@@ -125,7 +125,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			leftovers = null;
 		}
 
-		int[] tmp = calcPosAndMpos(fromServer);
+		int[] tmp = calcPosAndMposV2(fromServer);
 		if (tmp == null) {
 			return;
 		}
@@ -140,7 +140,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		/* Add text before change */
 		if (posBrac != 0) {
-			/* There's a trash letter before the brachet */
+			/* There's an esc sign before the brachet */
 			textPane.append(currentColor, fromServer.substring(0, posBrac - 1),
 					currentBold, currentUnderline, currentRevVid);
 		}
@@ -192,57 +192,43 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	}
 
-	/**
-	 * Finds start and stop of a color code using only match on [.
-	 * 
-	 * @param fromServer
-	 *            The string from server.
-	 * @return null if it found no color code or if we need more input to
-	 *         complet it. Normal case is array of 2 ints where first is start of brachet and
-	 *         next is ending m.
-	 */
-	private int[] calcPosAndMpos(String fromServer) {
-		int mpos = -1;
-		int posBrac = 0;
+	private int[] calcPosAndMposV2(String fromServer) {
 
-		while (posBrac >= 0 && mpos == -1) {
-
-			posBrac = fromServer.indexOf('[', posBrac);
-
-			if (posBrac == -1) {
-				addText(fromServer);
-				return null;
-			}
-
-			mpos = fromServer.indexOf('m', posBrac);
-
-			if ((fromServer.length() - 1) > posBrac) {
-				int nextBrac = fromServer.indexOf('[', posBrac + 1);
-				if (nextBrac != -1 && nextBrac < mpos) {
-					posBrac = nextBrac;
-					mpos = -1;
-					continue;
-				}
-			}
-
-			/* Maybe a [ has sneaked itself in like [[...m */
-
-			if (mpos == -1 || mpos > (posBrac + 5)) {
-
-				/*
-				 * Maybe just a [ without a m? Then we look for next [ by
-				 * looping again.
-				 */
-				if ((fromServer.length() - posBrac) > 5) {
-					posBrac++;
-					mpos = -1;
-				} else {
-					leftovers = fromServer;
-					return null;
-				}
-			}
+		if (fromServer.length() == 0) {
+			return null;
 		}
-		return new int[]{posBrac, mpos};
+		int startCode = fromServer.indexOf(27);
+
+		/* No esc start found */
+		if (startCode == -1) {
+			addText(fromServer);
+			return null;
+		}
+
+		/*
+		 * Was the last letter, the escape char - keep it for later let the
+		 * regular parsing do it.
+		 */
+		if (startCode == (fromServer.length() - 1)) {
+			leftovers = fromServer;
+			return null;
+		}
+
+		/* Just an escape? Then we just print it and keep going. */
+		if (fromServer.charAt(startCode + 1) != '[') {
+			addText(fromServer.substring(0, startCode));
+			calcPosAndMposV2(fromServer.substring(startCode + 1));
+		}
+
+		int mpos = fromServer.indexOf('m', startCode + 1);
+
+		if (mpos != -1) {
+			return new int[]{startCode + 1, mpos};
+		}
+
+		leftovers = fromServer;
+
+		return null;
 	}
 
 	private void addText(String text) {

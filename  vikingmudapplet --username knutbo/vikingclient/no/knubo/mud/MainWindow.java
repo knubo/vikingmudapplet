@@ -332,6 +332,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 			names.add(f.getName());
 		}
+		names.add("Verdana");
 
 		for (Iterator i = names.iterator(); i.hasNext();) {
 			String name = (String) i.next();
@@ -344,7 +345,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 			familymenu.add(item);
 		}
 		/* On request */
-		familymenu.add("Verdana");
 
 	}
 

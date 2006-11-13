@@ -32,7 +32,7 @@ class About {
 
 		return "\nChange history:\n"
 				+ LATEST
-				+ " Font menu completed - picks out monospaced fonts from user terminal.\n"
+				+ " Font menu completed - picks out monospaced fonts from users computer.\n"
 				+ "0.13 Added emacs like keybindings like - ctrl-a, ctrl-e and ctrl-k.\n"
 				+ "0.12 Fixed colouring methods - simpler and correct now. Removed scrollbar for input fields and fixed size issues.\n"
 				+ "0.11 Same font for input area as for textarea. Changed font for menu.\n"

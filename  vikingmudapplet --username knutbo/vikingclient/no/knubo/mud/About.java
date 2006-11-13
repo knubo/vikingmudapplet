@@ -32,7 +32,7 @@ class About {
 
 		return "\nChange history:\n"
 				+ LATEST
-				+ " Fixed colouring methods - simpler and correct now.\n"
+				+ " Fixed colouring methods - simpler and correct now. Removed scrollbar for input fields and fixed size issues.\n"
 				+ "0.11 Same font for input area as for textarea. Changed font for menu.\n"
 				+ "0.10 Added showing of current font in menu (also for other fonts if you have done so).\n"
 				+ "0.9 Added applet parameter FONT_NAME and FONT_SIZE. Font size must be an integer.\n"
@@ -43,6 +43,6 @@ class About {
 				+ "0.4 Added font size change.\n"
 				+ "0.3 Added command repeats.\n"
 				+ "0.2 Added history. Removed telnet noise upon login.\n"
-				+ "0.1 Created applet.";
+				+ "0.1 Created applet.\n";
 	}
 }

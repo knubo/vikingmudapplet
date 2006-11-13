@@ -63,11 +63,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * Setup stuff.
 	 */
 	public void init() {
-		Font menuFont = new Font("Verdana",Font.PLAIN, 12);
+		Font menuFont = new Font("Verdana", Font.PLAIN, 12);
 		UIManager.put("Menu.font", menuFont);
 		UIManager.put("MenuItem.font", menuFont);
 		UIManager.put("CheckBoxMenuItem.font", menuFont);
-		
+
 		history = new History();
 
 		textPane = new ColorPane();
@@ -94,7 +94,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		int width = textPane.getFontMetrics(sizeFont).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
-		setLocation(50, 50);
 
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
@@ -104,7 +103,9 @@ public class MainWindow extends JApplet implements MenuTopics {
 		displayConstraints.gridy = 0;
 		displayConstraints.gridwidth = 1;
 		displayConstraints.gridheight = 1;
+		displayConstraints.anchor = GridBagConstraints.NORTHWEST;
 		displayConstraints.fill = GridBagConstraints.BOTH;
+		displayConstraints.weightx = 1;
 		displayConstraints.weighty = 1;
 		gbl.setConstraints(scrollPane, displayConstraints);
 		add(scrollPane);
@@ -122,6 +123,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textInput.setFont(textPane.getFont());
 		textInput.setCaretColor(Color.WHITE);
 		displayConstraints.gridy = 1;
+		displayConstraints.weightx = 0;
 		displayConstraints.weighty = 0;
 
 		gbl.setConstraints(textInput, displayConstraints);

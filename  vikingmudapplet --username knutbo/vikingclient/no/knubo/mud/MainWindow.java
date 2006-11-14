@@ -30,6 +30,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import javax.swing.plaf.SeparatorUI;
 
 /**
  * Main code for the applet window. Sets up window stuff.
@@ -123,6 +124,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		// Set up the menu bar.
 		JMenuBar mb = new JMenuBar();
 		mb.add(createGameMenu());
+		mb.add(createCommandMenu());
 		mb.add(createFontMenu());
 		mb.add(createColorMenu());
 		mb.add(createHistoryMenu());
@@ -391,6 +393,37 @@ public class MainWindow extends JApplet implements MenuTopics {
 		}
 	}
 
+	private JMenu createCommandMenu() {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
+
+				if (communicationThread == null) {
+					textPane.appendPlain("You need to connect first.\n",
+							Color.YELLOW);
+					return;
+				}
+				communicationThread.doAction(item.getText());
+			}
+		};
+		
+		JMenu menu = new JMenu("Commands");
+
+		menu.add(menuitem("bags", actionListener));
+		menu.add(menuitem("eq", actionListener));
+		menu.add(menuitem("inventory", actionListener));
+		menu.add(menuitem("look", actionListener));
+		menu.add(menuitem("score", actionListener));
+		menu.add(menuitem("wear all", actionListener));
+		menu.add(menuitem("wield all", actionListener));
+		menu.add(menuitem("who", actionListener));
+		menu.add(new JSeparator());
+		menu.add(menuitem("west", actionListener));
+		menu.add(menuitem("north", actionListener));
+		menu.add(menuitem("east", actionListener));
+		menu.add(menuitem("south", actionListener));
+		return menu;
+	}
 	private JMenu createColorMenu() {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -513,7 +546,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 					String topic = (String) helpMap.get(item.getText());
 
 					if (communicationThread != null) {
-						communicationThread.doAction("!"+topic);
+						communicationThread.doAction("!" + topic);
 					} else {
 						textPane.appendPlain("You need to connect first.\n",
 								Color.YELLOW);

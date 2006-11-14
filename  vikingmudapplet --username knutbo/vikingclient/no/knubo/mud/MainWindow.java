@@ -61,8 +61,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	History history;
 
-	JMenuItem clearWindow;
-
 	int fontSize;
 
 	String chosenFont;
@@ -465,7 +463,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		menu.add(new JSeparator());
 
-		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));
 		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));
 
 		menu.add(new JSeparator());

@@ -13,8 +13,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import javax.swing.JApplet;
 import javax.swing.JCheckBoxMenuItem;
@@ -32,6 +36,8 @@ import javax.swing.UIManager;
  */
 public class MainWindow extends JApplet implements MenuTopics {
 
+	private static final String GAME_LOGG_OFF = "Logg off";
+
 	private static final String COURIER_NEW = "Courier New";
 
 	private static final int DEFALT_FONT_SIZE = 12;
@@ -48,12 +54,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 	Object doclock = new Object();
 
 	JTextArea textInput;
-
-	JMenuItem guestLogin;
-
-	JMenuItem plainLogin;
-
-	JMenuItem loggOff;
 
 	private Thread theThread;
 
@@ -424,21 +424,10 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		JMenu menu = new JMenu("Colour");
 
-		JMenuItem menuItem = new JMenuItem(TURN_ON_COLOUR_SUPPORT);
-		menuItem.addActionListener(actionListener);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(TURN_OFF_COLOUR_SUPPORT);
-		menuItem.addActionListener(actionListener);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(SHOW_COLORS);
-		menuItem.addActionListener(actionListener);
-		menu.add(menuItem);
-
-		menuItem = new JMenuItem(SUGGEST_COLOURS);
-		menuItem.addActionListener(actionListener);
-		menu.add(menuItem);
+		menu.add(menuitem(TURN_ON_COLOUR_SUPPORT, actionListener));
+		menu.add(menuitem(TURN_OFF_COLOUR_SUPPORT, actionListener));
+		menu.add(menuitem(SHOW_COLORS, actionListener));
+		menu.add(menuitem(SUGGEST_COLOURS, actionListener));
 
 		return menu;
 	}
@@ -451,47 +440,50 @@ public class MainWindow extends JApplet implements MenuTopics {
 	private JMenu createGameMenu() {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
 
-				if (e.getSource() == guestLogin) {
+				if (item.getText().equals(GAME_LOGIN_AS_GUEST)) {
 					if (login()) {
 						communicationThread.loginGuest();
 					}
-				} else if (e.getSource() == plainLogin) {
+				} else if (item.getText().equals(GAME_JUST_LOGIN)) {
 					history.init_discard_count();
 					login();
-				} else if (e.getSource() == loggOff) {
+				} else if (item.getText().equals(GAME_LOGG_OFF)) {
 					if (communicationThread != null) {
 						communicationThread.doAction("!quit");
 					}
-				} else if (e.getSource() == clearWindow) {
+				} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
 					textPane.setText("");
 				}
 			}
 		};
 
 		JMenu menu = new JMenu("Game");
-		guestLogin = new JMenuItem("Login as guest");
-		guestLogin.addActionListener(actionListener);
-		menu.add(guestLogin);
-		plainLogin = new JMenuItem("Just login");
-		plainLogin.addActionListener(actionListener);
-		menu.add(plainLogin);
+		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
+		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
 
 		menu.add(new JSeparator());
 
-		clearWindow = new JMenuItem("Clear window");
-		clearWindow.addActionListener(actionListener);
-		menu.add(clearWindow);
+		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));
+		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));
 
 		menu.add(new JSeparator());
-		loggOff = new JMenuItem("Logg off");
-		loggOff.addActionListener(actionListener);
-		menu.add(loggOff);
+
+		menu.add(menuitem(GAME_LOGG_OFF, actionListener));
 
 		return menu;
 	}
+	private JMenuItem menuitem(String text, ActionListener actionListener) {
+		JMenuItem menuItem = new JMenuItem(text);
+		menuItem.addActionListener(actionListener);
+		return menuItem;
+	}
+
 	private JMenu createHelpMenu() {
 		JMenu menu = new JMenu("Help");
+
+		final Map helpMap = getHelpMap();
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -519,29 +511,60 @@ public class MainWindow extends JApplet implements MenuTopics {
 					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
 				} else if (item.getText().equals(HELP_CHANGES)) {
 					textPane.appendPlain(About.changes(), Color.YELLOW);
+				} else {
+
+					String topic = (String) helpMap.get(item.getText());
+
+					if (communicationThread != null) {
+						communicationThread.doAction("!"+topic);
+					} else {
+						textPane.appendPlain("You need to connect first.\n",
+								Color.YELLOW);
+					}
 				}
 			}
 		};
 
-		JMenuItem item = new JMenuItem(HELP_CLIENT);
-		item.addActionListener(actionListener);
-		menu.add(item);
+		menu.add(menuitem(HELP_CLIENT, actionListener));
+		menu.add(menuitem(HELP_GETTING_STARTED, actionListener));
+		menu.add(menuitem(HELP_TOPICS, actionListener));
+		menu.add(new JSeparator());
 
-		item = new JMenuItem(HELP_GETTING_STARTED);
-		item.addActionListener(actionListener);
-		menu.add(item);
+		ArrayList topics = new ArrayList(helpMap.keySet());
+		Collections.sort(topics);
 
-		item = new JMenuItem(HELP_TOPICS);
-		item.addActionListener(actionListener);
-		menu.add(item);
+		for (Iterator i = topics.iterator(); i.hasNext();) {
+			String topic = (String) i.next();
 
-		item = new JMenuItem(HELP_CHANGES);
-		item.addActionListener(actionListener);
-		menu.add(item);
+			menu.add(menuitem(topic, actionListener));
+		}
 
-		item = new JMenuItem(HELP_ABOUT);
-		item.addActionListener(actionListener);
-		menu.add(item);
+		menu.add(new JSeparator());
+		menu.add(menuitem(HELP_CHANGES, actionListener));
+		menu.add(menuitem(HELP_ABOUT, actionListener));
 		return menu;
+	}
+
+	private Map getHelpMap() {
+		int i = 1;
+
+		HashMap data = new HashMap();
+
+		while (true) {
+			String helpTopic = getParameter("h_topic_" + i);
+
+			if (helpTopic == null) {
+				return data;
+			}
+			String helpcmd = getParameter("h_cmd_" + i);
+
+			if (helpcmd == null) {
+				return data;
+			}
+
+			data.put(helpTopic, helpcmd);
+
+			i++;
+		}
 	}
 }

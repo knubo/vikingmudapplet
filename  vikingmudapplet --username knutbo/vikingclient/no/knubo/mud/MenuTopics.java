@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 public interface MenuTopics {
-	String HELP_GETTING_STARTED = "Getting started";
+	String HELP_GETTING_STARTED = "Help on help	";
 	String HELP_TOPICS = "Topics";
 	String HELP_ABOUT = "About";
 	String HELP_CLIENT = "Client";
@@ -15,5 +15,9 @@ public interface MenuTopics {
 	String TURN_OFF_COLOUR_SUPPORT = "Turn off colour support";
 	String TURN_ON_COLOUR_SUPPORT = "Turn on colour support";
 	String SHOW_COLORS = "Show colors";
+
+	String GAME_CLEAR_WINDOW = "Clear window";
+	String GAME_JUST_LOGIN = "Just login";
+	String GAME_LOGIN_AS_GUEST = "Login as guest";
 
 }

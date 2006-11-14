@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.16";
+	final static String LATEST = "0.17";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -32,7 +32,8 @@ class About {
 
 		return "\nChange history:\n"
 				+ LATEST
-				+ " Added alias support.\n"
+				+ " Added colour menu to make it easier to get colours.\n"
+				+ "0.16 Added alias support.\n"
 				+ "0.15 Added splitting of commands by using the ; sign if the command starts with $.\n"
 				+ "0.14 Font menu completed - picks out monospaced fonts from users computer.\n"
 				+ "0.13 Added emacs like keybindings like - ctrl-a, ctrl-e and ctrl-k.\n"

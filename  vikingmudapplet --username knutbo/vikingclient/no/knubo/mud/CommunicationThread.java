@@ -73,8 +73,8 @@ class CommunicationThread implements Runnable, KeyListener {
 		formatCodes.put("36", Color.cyan);
 		formatCodes.put("37", Color.WHITE);
 		formatCodes.put("40", new RevVid(Color.DARK_GRAY)); /* Really black */
-		formatCodes.put("41", Color.RED);
-		formatCodes.put("42", Color.GREEN);
+		formatCodes.put("41", new RevVid(Color.RED));
+		formatCodes.put("42", new RevVid(Color.GREEN));
 		formatCodes.put("43", new RevVid(Color.YELLOW));
 		formatCodes.put("44", new RevVid(Color.BLUE));
 		formatCodes.put("45", new RevVid(Color.MAGENTA));

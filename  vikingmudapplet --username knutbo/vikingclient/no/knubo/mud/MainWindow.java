@@ -126,6 +126,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		JMenuBar mb = new JMenuBar();
 		mb.add(createGameMenu());
 		mb.add(createFontMenu());
+		mb.add(createColorMenu());
 		mb.add(createHistoryMenu());
 		mb.add(createAliasMenu());
 		mb.add(createHelpMenu());
@@ -390,6 +391,56 @@ public class MainWindow extends JApplet implements MenuTopics {
 			item.setSelected(true);
 			sizemenu.add(item);
 		}
+	}
+
+	private JMenu createColorMenu() {
+		ActionListener actionListener = new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				JMenuItem item = (JMenuItem) e.getSource();
+
+				if (communicationThread == null) {
+					textPane.appendPlain("You need to connect first.\n",
+							Color.YELLOW);
+					return;
+				}
+				if (item.getText().equals(TURN_ON_COLOUR_SUPPORT)) {
+					communicationThread.doAction("!screen term colxterm");
+				} else if (item.getText().equals(TURN_OFF_COLOUR_SUPPORT)) {
+					communicationThread.doAction("!screen term dumb");
+				} else if (item.getText().equals(SHOW_COLORS)) {
+					communicationThread.doAction("!colour");
+				} else if (item.getText().equals(SUGGEST_COLOURS)) {
+					String[] acts = {"colour youtell l_blue", "colour tells l_red",
+							"colour prompt l_yellow", "colour exits b_blue",
+							"colour channels l_green", "colour youhit l_green",
+							"colour hityou cyan", "colour youmiss green",
+							"colour missyou green"};
+					for (int i = 0; i < acts.length; i++) {
+						communicationThread.doAction(acts[i]);
+					}
+				}
+			}
+		};
+
+		JMenu menu = new JMenu("Colour");
+
+		JMenuItem menuItem = new JMenuItem(TURN_ON_COLOUR_SUPPORT);
+		menuItem.addActionListener(actionListener);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(TURN_OFF_COLOUR_SUPPORT);
+		menuItem.addActionListener(actionListener);
+		menu.add(menuItem);
+		
+		menuItem = new JMenuItem(SHOW_COLORS);
+		menuItem.addActionListener(actionListener);
+		menu.add(menuItem);
+
+		menuItem = new JMenuItem(SUGGEST_COLOURS);
+		menuItem.addActionListener(actionListener);
+		menu.add(menuItem);
+
+		return menu;
 	}
 
 	/**

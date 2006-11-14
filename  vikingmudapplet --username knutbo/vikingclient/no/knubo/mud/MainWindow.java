@@ -28,9 +28,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
-import javax.swing.plaf.SeparatorUI;
 
 /**
  * Main code for the applet window. Sets up window stuff.
@@ -227,6 +227,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	private JMenu createAliasMenu() {
 		JMenu menu = new JMenu("Aliases");
+		menu.setMnemonic('a');
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				aliasFrame.setVisible(true);
@@ -258,6 +259,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		};
 
 		JMenu menu = new JMenu("History");
+		menu.setMnemonic('h');
 
 		JMenuItem item = new JMenuItem(HISTORY_PREVIOUS_COMMAND);
 		item.addActionListener(actionListener);
@@ -287,7 +289,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	private JMenu createFontMenu() {
 		final JMenu menu = new JMenu("Font");
-
+		menu.setMnemonic('f');
 		final JMenu familymenu = new JMenu("Family");
 		final JMenu sizemenu = new JMenu("Size");
 		menu.add(familymenu);
@@ -408,7 +410,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 		};
 		
 		JMenu menu = new JMenu("Commands");
-
+		menu.setMnemonic('c');
+		
 		menu.add(menuitem("bags", actionListener));
 		menu.add(menuitem("eq", actionListener));
 		menu.add(menuitem("inventory", actionListener));
@@ -454,6 +457,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		};
 
 		JMenu menu = new JMenu("Colour");
+		menu.setMnemonic('o');
 
 		menu.add(menuitem(TURN_ON_COLOUR_SUPPORT, actionListener));
 		menu.add(menuitem(TURN_OFF_COLOUR_SUPPORT, actionListener));
@@ -491,6 +495,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		};
 
 		JMenu menu = new JMenu("Game");
+		menu.setMnemonic('g');
 		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
 		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
 
@@ -512,7 +517,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	private JMenu createHelpMenu() {
 		JMenu menu = new JMenu("Help");
-
+		menu.setMnemonic('h');
+		
 		final Map helpMap = getHelpMap();
 
 		ActionListener actionListener = new ActionListener() {

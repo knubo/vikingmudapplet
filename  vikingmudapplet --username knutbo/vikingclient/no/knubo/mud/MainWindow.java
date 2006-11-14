@@ -28,7 +28,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
-import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
 
@@ -405,13 +404,13 @@ public class MainWindow extends JApplet implements MenuTopics {
 							Color.YELLOW);
 					return;
 				}
-				communicationThread.doAction(item.getText());
+				communicationThread.doAction("!" + item.getText());
 			}
 		};
-		
+
 		JMenu menu = new JMenu("Commands");
 		menu.setMnemonic('c');
-		
+
 		menu.add(menuitem("bags", actionListener));
 		menu.add(menuitem("eq", actionListener));
 		menu.add(menuitem("inventory", actionListener));
@@ -518,7 +517,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 	private JMenu createHelpMenu() {
 		JMenu menu = new JMenu("Help");
 		menu.setMnemonic('h');
-		
+
 		final Map helpMap = getHelpMap();
 
 		ActionListener actionListener = new ActionListener() {

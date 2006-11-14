@@ -16,7 +16,10 @@ class About {
 		return "==========================================\n"
 				+ "Viking Mud Online Client " + LATEST + "\n"
 				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
-				+ "==========================================\n";
+				+ "==========================================\n\n"
+				+ "To play the game, select the game menu in the "
+				+ "top and select 'Login as guest' or 'Just login'. "
+				+ "See menu Help -> Client for even more details.\n";
 	}
 
 	public static String aboutInfo() {

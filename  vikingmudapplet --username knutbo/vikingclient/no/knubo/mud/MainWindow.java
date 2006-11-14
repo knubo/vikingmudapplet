@@ -410,11 +410,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 				} else if (item.getText().equals(SHOW_COLORS)) {
 					communicationThread.doAction("!colour");
 				} else if (item.getText().equals(SUGGEST_COLOURS)) {
-					String[] acts = {"colour youtell l_blue", "colour tells l_red",
-							"colour prompt l_yellow", "colour exits b_blue",
-							"colour channels l_green", "colour youhit l_green",
-							"colour hityou cyan", "colour youmiss green",
-							"colour missyou green"};
+					String[] acts = {"colour youtell l_blue",
+							"colour tells l_red", "colour prompt l_yellow",
+							"colour exits b_blue", "colour channels l_green",
+							"colour youhit l_green", "colour hityou cyan",
+							"colour youmiss green", "colour missyou green"};
 					for (int i = 0; i < acts.length; i++) {
 						communicationThread.doAction(acts[i]);
 					}
@@ -431,7 +431,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menuItem = new JMenuItem(TURN_OFF_COLOUR_SUPPORT);
 		menuItem.addActionListener(actionListener);
 		menu.add(menuItem);
-		
+
 		menuItem = new JMenuItem(SHOW_COLORS);
 		menuItem.addActionListener(actionListener);
 		menu.add(menuItem);

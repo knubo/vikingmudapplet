@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.19";
+	final static String LATEST = "0.20";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -52,8 +52,7 @@ class About {
 				+ "0.16 Added alias support.\n"
 				+ "0.17 Added colour menu to make it easier to get colours.\n"
 				+ "0.18 Added support for dynamic help with input as applet parameters.\n"
-				+ LATEST
-				+ " Added commands menu which gives a set of useful commands for beginners."
-				+ "\n";
+				+ "0.19 Added commands menu which gives a set of useful commands for beginners.\n"
+				+ LATEST + " Added alias recorder - work in progress." + "\n";
 	}
 }

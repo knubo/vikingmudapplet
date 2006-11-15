@@ -63,15 +63,31 @@ class Aliases extends JFrame implements ActionListener, Alias {
 			setVisible(false);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see no.knubo.mud.Alias#getAlias(java.lang.String)
 	 */
 	public String getAlias(String action) {
-		if(aliases == null) {
+		if (aliases == null) {
 			return null;
 		}
 		return (String) aliases.get(action);
+	}
+
+	public boolean addAlias(String id, String value) {
+		
+		if(aliases.containsKey(id)) {
+			return false;
+		}
+		
+		int len = textPane.getDocument().getLength();
+		textPane.setCaretPosition(len);
+		textPane.replaceSelection("\n" + id + "=" + value);
+
+		aliases.put(id, value);
+		return true;
 	}
 
 	private boolean checkAliases() {
@@ -90,14 +106,13 @@ class Aliases extends JFrame implements ActionListener, Alias {
 								+ line);
 				return false;
 			}
-			
-			if(line.length() == pos+1) {
+
+			if (line.length() == pos + 1) {
 				JOptionPane.showMessageDialog(this,
-						"Action missing for alias. Line found was:\n"
-								+ line);
+						"Action missing for alias. Line found was:\n" + line);
 				return false;
 			}
-			
+
 			aliases.put(line.substring(0, pos), line.substring(pos + 1));
 		}
 

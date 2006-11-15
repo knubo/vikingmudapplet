@@ -43,11 +43,14 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private final History history;
 	private final Alias aliases;
+	private final Aliasrecorder aliasRecorder;
 
-	CommunicationThread(ColorPane textPane, History history, Alias aliases) {
+	CommunicationThread(ColorPane textPane, History history, Alias aliases,
+			Aliasrecorder aliasRecorder) {
 		this.textPane = textPane;
 		this.history = history;
 		this.aliases = aliases;
+		this.aliasRecorder = aliasRecorder;
 		currentColor = Color.WHITE;
 		setupColorCodes();
 		startupLists = new LinkedList();
@@ -340,14 +343,15 @@ class CommunicationThread implements Runnable, KeyListener {
 				}
 
 				history.addHistroy(raw);
+				aliasRecorder.addCommand(raw);
 				textPane.appendPlain(toSend, Color.white);
 
 				/* alias replacement */
 				String alias = aliases.getAlias(raw);
-				if(alias != null) {
+				if (alias != null) {
 					raw = alias;
 				}
-				
+
 				String[] actions = null;
 				if (raw.startsWith("$")) {
 					actions = raw.substring(1).split(";");
@@ -357,7 +361,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 				for (int k = 0; k < actions.length; k++) {
 					String action = actions[k];
-					
+
 					String[] reps = calcReps(action);
 
 					for (int i = Integer.parseInt(reps[1]); i-- > 0;) {

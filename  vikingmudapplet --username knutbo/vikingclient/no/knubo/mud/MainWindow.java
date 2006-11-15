@@ -67,6 +67,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	Aliases aliasFrame;
 
+	AliasrecorderImpl aliasRecordFrame;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -78,6 +80,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		history = new History();
 		aliasFrame = new Aliases();
+		aliasRecordFrame = new AliasrecorderImpl(aliasFrame);
 
 		textPane = new ColorPane();
 		textPane.setMargin(new Insets(5, 5, 5, 5));
@@ -214,7 +217,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
-					history, this.aliasFrame);
+					history, this.aliasFrame, this.aliasRecordFrame);
 
 			this.textInput.addKeyListener(communicationThread);
 		}
@@ -229,13 +232,20 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menu.setMnemonic('a');
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				aliasFrame.setVisible(true);
+				JMenuItem item = (JMenuItem) e.getSource();
+
+				final String choice = item.getText();
+
+				if (choice.equals("Edit aliases")) {
+					aliasFrame.setVisible(true);
+				} else if(choice.equals("Record alias")) {
+					aliasRecordFrame.setVisible(true);
+				}
 			}
 		};
 
-		JMenuItem item = new JMenuItem("Edit aliases");
-		item.addActionListener(actionListener);
-		menu.add(item);
+		menu.add(menuitem("Edit aliases", actionListener));
+		menu.add(menuitem("Record alias", actionListener));
 
 		return menu;
 	}

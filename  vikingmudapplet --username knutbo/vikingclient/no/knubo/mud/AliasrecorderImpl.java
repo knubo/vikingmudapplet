@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -105,6 +107,13 @@ class AliasrecorderImpl extends JFrame
 		displayConstraints.gridy = 2;
 		gbl.setConstraints(delete, displayConstraints);
 		getContentPane().add(delete);
+
+		JButton reverse = new JButton("Add reversed");
+		reverse.addActionListener(this);
+		displayConstraints.gridx = 2;
+		displayConstraints.gridy = 2;
+		gbl.setConstraints(reverse, displayConstraints);
+		getContentPane().add(reverse);
 
 		JLabel label = new JLabel("Alias");
 		displayConstraints.gridx = 0;
@@ -216,8 +225,8 @@ class AliasrecorderImpl extends JFrame
 				recordedLines.add("nop");
 				notifyInsert(recordedLines.size() - 1);
 			} else {
-				recordedLines.add(row+1, "nop");
-				notifyInsert(row+1);
+				recordedLines.add(row + 1, "nop");
+				notifyInsert(row + 1);
 			}
 		} else if (button.getText().equals("Delete line")) {
 			int selectedRow = table.getSelectedRow();
@@ -228,6 +237,11 @@ class AliasrecorderImpl extends JFrame
 			}
 		} else if (button.getText().equals("Create alias")) {
 			doCreateAlias();
+		} else if (button.getText().equals("Add reversed")) {
+			ArrayList al = new ArrayList(recordedLines);
+			Collections.reverse(al);
+			recordedLines.addAll(al);
+			notify_listeners(new TableModelEvent(this));
 		}
 
 	}
@@ -252,6 +266,13 @@ class AliasrecorderImpl extends JFrame
 
 		String name = this.aliasName.getText();
 
+		name = name.trim();
+
+		if (name.length() == 0) {
+			JOptionPane.showMessageDialog(this, "Please provide alias name.");
+			return;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		sb.append("$");
 		for (Iterator i = compressedList.iterator(); i.hasNext();) {
@@ -261,7 +282,12 @@ class AliasrecorderImpl extends JFrame
 				sb.append(";");
 			}
 		}
-		alias.addAlias(name, sb.toString());
+		if (!alias.addAlias(name, sb.toString())) {
+			JOptionPane
+					.showMessageDialog(this,
+							"Provided alias name is already used, please use some other one.");
+			return;
+		}
 		clearAll();
 		aliasName.setText("");
 	}

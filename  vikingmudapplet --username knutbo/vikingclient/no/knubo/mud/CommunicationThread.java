@@ -45,12 +45,17 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final Alias aliases;
 	private final Aliasrecorder aliasRecorder;
 
+	private long lastPoll;
+	private final long timeBetweenPoll = 30 * 1000;
+	private final Inventory inventory;
+	
 	CommunicationThread(ColorPane textPane, History history, Alias aliases,
-			Aliasrecorder aliasRecorder) {
+			Aliasrecorder aliasRecorder, Inventory inventory) {
 		this.textPane = textPane;
 		this.history = history;
 		this.aliases = aliases;
 		this.aliasRecorder = aliasRecorder;
+		this.inventory = inventory;
 		currentColor = Color.WHITE;
 		setupColorCodes();
 		startupLists = new LinkedList();
@@ -255,6 +260,12 @@ class CommunicationThread implements Runnable, KeyListener {
 				doActions();
 				return readSome();
 			}
+			
+			if(lastPoll + timeBetweenPoll < System.currentTimeMillis()) {
+				lastPoll = System.currentTimeMillis();
+				return inventory.readInventory(vikingIn, vikingOut);
+			}
+			
 		}
 
 		int read = vikingIn.read(bytes, 0, available);

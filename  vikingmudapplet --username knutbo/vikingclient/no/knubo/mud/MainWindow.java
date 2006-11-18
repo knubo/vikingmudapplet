@@ -69,6 +69,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	AliasrecorderImpl aliasRecordFrame;
 
+	Inventory inventoryFrame;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -80,6 +82,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		history = new History();
 		aliasFrame = new Aliases();
+		inventoryFrame = new Inventory();
 		aliasRecordFrame = new AliasrecorderImpl(aliasFrame);
 
 		textPane = new ColorPane();
@@ -217,7 +220,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
-					history, this.aliasFrame, this.aliasRecordFrame);
+					history, this.aliasFrame, this.aliasRecordFrame,
+					this.inventoryFrame);
 
 			this.textInput.addKeyListener(communicationThread);
 		}
@@ -238,7 +242,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 				if (choice.equals("Edit aliases")) {
 					aliasFrame.setVisible(true);
-				} else if(choice.equals("Record alias")) {
+				} else if (choice.equals("Record alias")) {
 					aliasRecordFrame.setVisible(true);
 				}
 			}
@@ -499,6 +503,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 					}
 				} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
 					textPane.setText("");
+				} else if(item.getText().equals(GAME_INVENTORY)) {
+					inventoryFrame.setVisible(true);
 				}
 			}
 		};
@@ -508,6 +514,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
 		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
 
+		menu.add(new JSeparator());
+		menu.add(menuitem(GAME_INVENTORY, actionListener));
 		menu.add(new JSeparator());
 
 		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));

@@ -8,6 +8,10 @@ import java.util.List;
 
 import javax.swing.JFrame;
 
+import no.knubo.mud.inventory.Armour;
+import no.knubo.mud.inventory.Item;
+import no.knubo.mud.inventory.Weapon;
+
 class Inventory extends JFrame {
 
 	private List inventory = new ArrayList(255);
@@ -59,13 +63,13 @@ class Inventory extends JFrame {
 		boolean worn = false;
 		char wield = 0;
 		String armourType = null;
-		
+
 		switch (type) {
 			case 'W' :
 				if (data[3].length() > 0) {
 					wield = data[3].charAt(0);
 				}
-				break;
+				return new Weapon(tagged, shortdesc, wornOut, type, wield);
 			case 'A' :
 				worn = data[3].charAt(0) == '*';
 
@@ -74,9 +78,14 @@ class Inventory extends JFrame {
 				} else {
 					armourType = data[3];
 				}
-				break;
+
+				return new Armour(tagged, shortdesc, wornOut, type, worn,
+						armourType);
+			default :
+				return new Item(tagged, shortdesc, wornOut, type);
+
 		}
-		return null;
+
 	}
 
 	private void readData(InputStream vikingIn, StringBuilder read)

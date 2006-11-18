@@ -1,5 +1,6 @@
 package no.knubo.mud.inventory;
 
+
 public class Armour extends Item implements Cloneable {
 
 	private final boolean worn;

@@ -1,5 +1,6 @@
 package no.knubo.mud.inventory;
 
+
 public class Weapon extends Item implements Cloneable {
 
 	private final char wield;

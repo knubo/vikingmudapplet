@@ -4,19 +4,40 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import no.knubo.mud.inventory.Armour;
+import no.knubo.mud.inventory.Container;
 import no.knubo.mud.inventory.Item;
 import no.knubo.mud.inventory.Weapon;
 
-class Inventory extends JFrame {
+public class Inventory extends JFrame implements TreeModel {
 
 	private List inventory = new ArrayList(255);
 
+	private List listeners = new LinkedList();
+
+	private TreeRoot treeRoot = new TreeRoot();
+
 	private static final String ESC = String.valueOf((char) 27);
+
+	Inventory() {
+		JTree tree = new JTree();
+		tree.setModel(this);
+		tree.setEditable(false);
+		tree.setDoubleBuffered(true);
+		tree.setRootVisible(false);
+		getContentPane().add(tree);
+	}
 
 	public String readInventory(InputStream vikingIn, PrintStream vikingOut)
 			throws IOException {
@@ -36,21 +57,59 @@ class Inventory extends JFrame {
 
 		parseInventory(read.substring(start + 5, end));
 
+		notifyListeners();
+
+		System.out.println("Updated inventory");
+
 		return read.substring(0, start) + read.substring(end + 4);
 	}
 
+	private void notifyListeners() {
+		for (Iterator i = listeners.iterator(); i.hasNext();) {
+			TreeModelListener listener = (TreeModelListener) i.next();
+			listener.treeStructureChanged(new TreeModelEvent(this,
+					new Object[]{treeRoot}));
+
+		}
+	}
+
 	private void parseInventory(String string) {
-		String[] lines = string.split("\n");
+		String[] lines = string.split("\r\n");
 
 		inventory.clear();
 
+		Container container = null;
 		for (int i = 0; i < lines.length; i++) {
 			String line = lines[i];
+
+			if (line.length() == 0) {
+				continue;
+			}
+
+			boolean inContainer = line.startsWith(">");
+			if (inContainer) {
+				line = line.substring(1);
+			}
 
 			String data[] = line.split(ESC);
 
 			Item item = createItem(data);
-			inventory.add(item);
+			
+			if(data[data.length-1].startsWith("#")) {
+				item.setCount(data[data.length-1].length());
+			}
+
+			if (item instanceof Container) {
+				container = (Container) item;
+			}
+
+			if (inContainer) {
+				if (container != null) {
+					container.add(item);
+				}
+			} else {
+				inventory.add(item);
+			}
 		}
 
 	}
@@ -66,7 +125,7 @@ class Inventory extends JFrame {
 
 		switch (type) {
 			case 'W' :
-				if (data[3].length() > 0) {
+				if (data.length >= 4 ) {
 					wield = data[3].charAt(0);
 				}
 				return new Weapon(tagged, shortdesc, wornOut, type, wield);
@@ -81,13 +140,14 @@ class Inventory extends JFrame {
 
 				return new Armour(tagged, shortdesc, wornOut, type, worn,
 						armourType);
+			case 'C' :
+				return new Container(tagged, shortdesc, wornOut, type);
 			default :
 				return new Item(tagged, shortdesc, wornOut, type);
 
 		}
 
 	}
-
 	private void readData(InputStream vikingIn, StringBuilder read)
 			throws IOException {
 
@@ -99,5 +159,70 @@ class Inventory extends JFrame {
 
 			read.append(new String(bytes, 0, bc));
 		}
+	}
+
+	public void addTreeModelListener(TreeModelListener l) {
+		listeners.add(l);
+	}
+
+	public Object getChild(Object parent, int index) {
+		if (parent == treeRoot) {
+			return inventory.get(index);
+		}
+
+		if (parent instanceof Container) {
+			Container cont = (Container) parent;
+
+			return cont.getItem(index);
+		}
+
+		return null;
+	}
+
+	public int getChildCount(Object parent) {
+		if (parent == treeRoot) {
+			System.out.println("Child count:" + inventory.size());
+			return inventory.size();
+		}
+
+		if (parent instanceof Container) {
+			Container cont = (Container) parent;
+
+			return cont.getItemCount();
+		}
+
+		return 0;
+	}
+
+	public int getIndexOfChild(Object parent, Object child) {
+		if (parent == treeRoot) {
+			return inventory.indexOf(child);
+		}
+		if (parent instanceof Container) {
+			Container cont = (Container) parent;
+
+			return cont.getIndex(child);
+		}
+		return 0;
+	}
+
+	public Object getRoot() {
+		return treeRoot;
+	}
+
+	public boolean isLeaf(Object node) {
+		return node != treeRoot && !(node instanceof Container);
+	}
+
+	public void removeTreeModelListener(TreeModelListener l) {
+		listeners.remove(l);
+	}
+
+	public void valueForPathChanged(TreePath path, Object newValue) {
+		System.out.println("HUM");
+	}
+
+	public String toString() {
+		return "[Inventory]";
 	}
 }

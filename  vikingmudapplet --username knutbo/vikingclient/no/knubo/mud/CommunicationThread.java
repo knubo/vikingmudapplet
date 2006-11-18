@@ -49,6 +49,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final long timeBetweenPoll = 10 * 1000;
 	private final Inventory inventory;
 
+	private boolean loginComplete = false;
+
 	CommunicationThread(ColorPane textPane, History history, Alias aliases,
 			Aliasrecorder aliasRecorder, Inventory inventory) {
 		this.textPane = textPane;
@@ -97,6 +99,8 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void run() {
 		try {
+			loginComplete = false;
+			leftovers = null;
 			vikingSocket = new Socket("connect.vikingmud.org", 2001);
 			vikingOut = new PrintStream(vikingSocket.getOutputStream(), true);
 			vikingIn = vikingSocket.getInputStream();
@@ -248,9 +252,9 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private String readSome() throws IOException {
 		int available = vikingIn.available();
-		byte[] bytes = new byte[80];
-		if (available > 80) {
-			available = 80;
+		byte[] bytes = new byte[255];
+		if (available > 255) {
+			available = 255;
 		}
 
 		if (available < 1) {
@@ -262,7 +266,9 @@ class CommunicationThread implements Runnable, KeyListener {
 			}
 
 			try {
-				if (lastPoll + timeBetweenPoll < System.currentTimeMillis()) {
+				if (loginComplete
+						&& lastPoll + timeBetweenPoll < System
+								.currentTimeMillis()) {
 					lastPoll = System.currentTimeMillis();
 					return inventory.readInventory(vikingIn, vikingOut);
 				}
@@ -276,6 +282,21 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		if (read == -1) {
 			return null;
+		}
+
+		if (!loginComplete) {
+			for (int i = 0; i < read; i++) {
+				byte b = bytes[i];
+
+				if (b < 0) {
+
+					if (b == -4) {
+						loginComplete = true;
+						System.out.println("Login complete");
+					}
+					bytes[i] = 2;
+				}
+			}
 		}
 
 		return new String(bytes, 0, read);

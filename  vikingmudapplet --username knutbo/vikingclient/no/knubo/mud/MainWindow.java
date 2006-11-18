@@ -351,7 +351,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 			JCheckBoxMenuItem item = new JCheckBoxMenuItem(name);
 			item.addActionListener(actionListener);
-			if (item.equals(chosenFont)) {
+			if (name.equals(chosenFont)) {
 				item.setSelected(true);
 			}
 			familymenu.add(item);

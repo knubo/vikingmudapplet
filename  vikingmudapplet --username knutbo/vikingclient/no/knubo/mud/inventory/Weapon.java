@@ -5,9 +5,9 @@ public class Weapon extends Item implements Cloneable {
 
 	private final char wield;
 
-	public Weapon(boolean tagged, String shortdesc, int wornOut, char type,
+	public Weapon(int id, boolean tagged, String shortdesc, int wornOut, char type,
 			char wield) {
-		super(tagged, shortdesc, wornOut, type);
+		super(id, tagged, shortdesc, wornOut, type);
 		this.wield = wield;
 
 	}

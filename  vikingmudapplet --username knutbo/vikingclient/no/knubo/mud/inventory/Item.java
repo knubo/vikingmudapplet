@@ -7,8 +7,10 @@ public class Item implements Cloneable {
 	private final int wornOut;
 	private final char type;
 	private int count;
+	private final int id;
 
-	public Item(boolean tagged, String shortdesc, int wornOut, char type) {
+	public Item(int id, boolean tagged, String shortdesc, int wornOut, char type) {
+		this.id = id;
 		this.tagged = tagged;
 		this.shortdesc = shortdesc;
 		this.wornOut = wornOut;
@@ -45,6 +47,23 @@ public class Item implements Cloneable {
 
 	public void setCount(int c) {
 		this.count = c;
+	}
+
+	public int getCount() {
+		return count;
+	}
+
+	public boolean hasSameShort(Item n) {
+		return n.getType() == getType() && n.isTagged() == isTagged()
+				&& n.getShortdesc().equals(getShortdesc());
+	}
+	
+	public boolean equals(Object obj) {
+		return ((Item)obj).id == id;
+	}
+
+	public int hashCode() {
+		return id * 41;
 	}
 
 }

@@ -288,7 +288,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			for (int i = 0; i < read; i++) {
 				byte b = bytes[i];
 
-				if (b < 0) {
+				if (b < 31 && b != 10 && b != 9 && b != 13) {
 
 					if (b == -4) {
 						loginComplete = true;

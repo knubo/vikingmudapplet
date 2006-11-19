@@ -6,9 +6,9 @@ public class Armour extends Item implements Cloneable {
 	private final boolean worn;
 	private final String armourType;
 
-	public Armour(boolean tagged, String shortdesc, int wornOut, char type,
+	public Armour(int id, boolean tagged, String shortdesc, int wornOut, char type,
 			boolean worn, String armourType) {
-		super(tagged, shortdesc, wornOut, type);
+		super(id, tagged, shortdesc, wornOut, type);
 		this.worn = worn;
 		this.armourType = armourType;
 	}

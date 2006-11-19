@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.23";
+	final static String LATEST = "0.24";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -56,6 +56,7 @@ class About {
 				+ "0.20 Added alias recorder - work in progress.\n"
 				+ "0.21 Added 'add reversed' button to aliasrecorder and made it more robust."
 				+ "0.22 Added an inventory window which needs a lot of work :-)\n"
-				+ LATEST + " Made a v1.0 of the inventory window which looks like crap but work."+"\n";
+				+ "0.23 Made a v1.0 of the inventory window which looks like crap but work.\n"
+				+ LATEST + " Tried to remove even more telnet noise." + "\n";
 	}
 }

@@ -7,8 +7,8 @@ public class Container extends Item implements Cloneable {
 
 	List contains = new LinkedList();
 
-	public Container(boolean tagged, String shortdesc, int wornOut, char type ) {
-		super(tagged, shortdesc, wornOut, type);
+	public Container(int id, boolean tagged, String shortdesc, int wornOut, char type ) {
+		super(id, tagged, shortdesc, wornOut, type);
 	}
 
 	public Item copy() {

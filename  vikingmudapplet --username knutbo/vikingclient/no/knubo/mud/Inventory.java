@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JTree;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -20,7 +23,10 @@ import no.knubo.mud.inventory.Container;
 import no.knubo.mud.inventory.Item;
 import no.knubo.mud.inventory.Weapon;
 
-public class Inventory extends JFrame implements TreeModel {
+public class Inventory extends JFrame
+		implements
+			TreeModel,
+			TreeExpansionListener {
 
 	private List inventory = new ArrayList(255);
 
@@ -28,14 +34,19 @@ public class Inventory extends JFrame implements TreeModel {
 
 	private TreeRoot treeRoot = new TreeRoot();
 
+	private JTree tree;
+
 	private static final String ESC = String.valueOf((char) 27);
 
+	private HashSet bagsOpen = new HashSet();
+
 	Inventory() {
-		JTree tree = new JTree();
+		tree = new JTree();
 		tree.setModel(this);
 		tree.setEditable(false);
 		tree.setDoubleBuffered(true);
 		tree.setRootVisible(false);
+		tree.addTreeExpansionListener(this);
 		getContentPane().add(tree);
 	}
 
@@ -65,10 +76,21 @@ public class Inventory extends JFrame implements TreeModel {
 	}
 
 	private void notifyListeners() {
+
 		for (Iterator i = listeners.iterator(); i.hasNext();) {
 			TreeModelListener listener = (TreeModelListener) i.next();
+
 			listener.treeStructureChanged(new TreeModelEvent(this,
 					new Object[]{treeRoot}));
+		}
+
+		/* restore the blody selection afterwards. */
+		for (Iterator i = bagsOpen.iterator(); i.hasNext();) {
+			Item item = (Item) i.next();
+
+			Object[] objs = new Object[]{treeRoot, item};
+			TreePath path = new TreePath(objs);
+			tree.expandPath(path);
 
 		}
 	}
@@ -94,9 +116,10 @@ public class Inventory extends JFrame implements TreeModel {
 			String data[] = line.split(ESC);
 
 			Item item = createItem(data);
-			
-			if(data[data.length-1].startsWith("#")) {
-				item.setCount(data[data.length-1].length());
+			if (data[data.length - 1].startsWith("#")) {
+				int count = Integer
+						.parseInt(data[data.length - 1].substring(1));
+				item.setCount(count);
 			}
 
 			if (item instanceof Container) {
@@ -111,39 +134,39 @@ public class Inventory extends JFrame implements TreeModel {
 				inventory.add(item);
 			}
 		}
-
 	}
-
 	private Item createItem(String[] data) {
-		boolean tagged = data[0].charAt(0) == '1';
-		String shortdesc = data[0].substring(1);
-		char type = data[1].charAt(0);
-		int wornOut = Integer.parseInt(data[2]);
+		int id = Integer.parseInt(data[0]);
+		boolean tagged = data[1].charAt(0) == '1';
+		String shortdesc = data[1].substring(1);
+		char type = data[2].charAt(0);
+		int wornOut = Integer.parseInt(data[3]);
 		boolean worn = false;
 		char wield = 0;
+		
 		String armourType = null;
 
 		switch (type) {
 			case 'W' :
-				if (data.length >= 4 ) {
-					wield = data[3].charAt(0);
+				if (data.length >= 5) {
+					wield = data[4].charAt(0);
 				}
-				return new Weapon(tagged, shortdesc, wornOut, type, wield);
+				return new Weapon(id, tagged, shortdesc, wornOut, type, wield);
 			case 'A' :
-				worn = data[3].charAt(0) == '*';
+				worn = data[4].charAt(0) == '*';
 
 				if (worn) {
-					armourType = data[3].substring(1);
+					armourType = data[4].substring(1);
 				} else {
-					armourType = data[3];
+					armourType = data[4];
 				}
 
-				return new Armour(tagged, shortdesc, wornOut, type, worn,
+				return new Armour(id, tagged, shortdesc, wornOut, type, worn,
 						armourType);
 			case 'C' :
-				return new Container(tagged, shortdesc, wornOut, type);
+				return new Container(id, tagged, shortdesc, wornOut, type);
 			default :
-				return new Item(tagged, shortdesc, wornOut, type);
+				return new Item(id, tagged, shortdesc, wornOut, type);
 
 		}
 
@@ -225,4 +248,27 @@ public class Inventory extends JFrame implements TreeModel {
 	public String toString() {
 		return "[Inventory]";
 	}
+
+	public void treeCollapsed(TreeExpansionEvent event) {
+		TreePath path = event.getPath();
+
+		Object[] objs = path.getPath();
+
+		if (objs.length == 2) {
+			bagsOpen.remove(objs[1]);
+		}
+	}
+
+	public void treeExpanded(TreeExpansionEvent event) {
+		TreePath path = event.getPath();
+
+		Object[] objs = path.getPath();
+
+		if (objs.length == 2) {
+			bagsOpen.add(objs[1]);
+		}
+
+	}
+
+
 }

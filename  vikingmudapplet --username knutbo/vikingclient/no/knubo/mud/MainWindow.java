@@ -29,8 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
-import javax.swing.UIManager;
-
+ 
 /**
  * Main code for the applet window. Sets up window stuff.
  */
@@ -75,10 +74,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * Setup stuff.
 	 */
 	public void init() {
-		Font menuFont = new Font("Verdana", Font.PLAIN, 12);
-		UIManager.put("Menu.font", menuFont);
-		UIManager.put("MenuItem.font", menuFont);
-		UIManager.put("CheckBoxMenuItem.font", menuFont);
+		UIStuff.setupUI();
 
 		history = new History();
 		aliasFrame = new Aliases();
@@ -545,6 +541,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				textPane.appendPlain("\n", Color.white);
 
 				if (item.getText().equals(HELP_ABOUT)) {
+					UIStuff.setupUI();
 					textPane.appendPlain(About.aboutInfo(), Color.YELLOW);
 				} else if (item.getText().equals(HELP_GETTING_STARTED)) {
 					if (communicationThread != null) {

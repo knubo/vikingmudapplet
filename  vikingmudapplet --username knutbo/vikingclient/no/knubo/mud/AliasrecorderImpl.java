@@ -49,7 +49,7 @@ class AliasrecorderImpl extends JFrame
 
 		table = new JTable(this);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-
+		table.setOpaque(true);
 		JScrollPane scrollPane = new JScrollPane(table);
 
 		GridBagLayout gbl = new GridBagLayout();

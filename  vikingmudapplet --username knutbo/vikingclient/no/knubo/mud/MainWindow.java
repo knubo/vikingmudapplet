@@ -74,6 +74,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * Setup stuff.
 	 */
 	public void init() {
+		
+		
 		UIStuff.setupUI();
 
 		history = new History();

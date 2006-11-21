@@ -160,8 +160,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 		textInput.setBackground(Color.BLACK);
 		textInput.setForeground(Color.WHITE);
 
-		int inputHeight = (int) ((textInput.getFontMetrics(textInput.getFont())
-				.getHeight()) * 2.5);
+		int inputHeight = (int) (textInput.getFontMetrics(textInput.getFont())
+				.getHeight() * 2.5);
 		textInput
 				.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
 

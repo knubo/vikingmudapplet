@@ -20,7 +20,7 @@ class History {
 		
 		/* Don't keep adding similar entries or blanks */
 		if (command.trim().length() == 0
-				|| (history.size() > 0 && history.getLast().equals(command))) {
+				|| history.size() > 0 && history.getLast().equals(command)) {
 			iterator = history.listIterator();
 			return;
 		}

@@ -223,7 +223,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		 * Was the last letter, the escape char - keep it for later let the
 		 * regular parsing do it.
 		 */
-		if (startCode == (fromServer.length() - 1)) {
+		if (startCode == fromServer.length() - 1) {
 			leftovers = fromServer;
 			return null;
 		}

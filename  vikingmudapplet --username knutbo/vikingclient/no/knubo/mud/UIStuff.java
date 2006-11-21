@@ -40,9 +40,9 @@ public class UIStuff {
 		UIManager.put("Menu.background", bgColor);
 		UIManager.put("MenuItem.background", bgColor);
 		UIManager.put("CheckBoxMenuItem.background", bgColor);
-		UIManager.put("Menu.foreground", Color.white);
-		UIManager.put("MenuItem.foreground", Color.white);
-		UIManager.put("CheckBoxMenuItem.foreground", Color.white);
+		UIManager.put("Menu.foreground", Color.yellow);
+		UIManager.put("MenuItem.foreground", Color.yellow);
+		UIManager.put("CheckBoxMenuItem.foreground", Color.yellow);
 		
 		
 	}

@@ -37,6 +37,10 @@ public class UIStuff {
 				}
 
 				result = m.invoke(obj, args);
+				if (args != null && args.length >= 2
+						&& args[1] instanceof Graphics) {
+					((Graphics) args[1]).setColor(Color.white);
+				}
 			} catch (InvocationTargetException e) {
 				throw e.getTargetException();
 			} catch (Exception e) {
@@ -48,6 +52,16 @@ public class UIStuff {
 	}
 
 	public static void setupUI() {
+		if (false) {
+			String laf = "";
+			laf = "javax.swing.plaf.metal.MetalLookAndFeel";
+			try {
+				UIManager.setLookAndFeel(laf);
+			} catch (Exception e2) {
+				System.out.println(e2);
+			}
+		}
+
 		Font menuFont = new Font("Verdana", Font.PLAIN, 12);
 		UIManager.put("Menu.font", menuFont);
 		UIManager.put("MenuItem.font", menuFont);

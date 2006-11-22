@@ -302,7 +302,9 @@ public class MainWindow extends JApplet implements MenuTopics {
 		final JMenu menu = new JMenu("Font");
 		menu.setMnemonic('f');
 		final JMenu familymenu = new JMenu("Family");
+		familymenu.setOpaque(true);
 		final JMenu sizemenu = new JMenu("Size");
+		sizemenu.setOpaque(true);
 		menu.add(familymenu);
 		menu.add(sizemenu);
 

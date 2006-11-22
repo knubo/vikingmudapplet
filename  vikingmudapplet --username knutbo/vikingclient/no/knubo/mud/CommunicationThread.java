@@ -46,7 +46,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final Aliasrecorder aliasRecorder;
 
 	private long lastPoll;
-	private final long timeBetweenPoll = 20 * 1000;
+	private final long timeBetweenPoll = 10 * 1000;
 	private final Inventory inventory;
 
 	private boolean loginComplete = false;

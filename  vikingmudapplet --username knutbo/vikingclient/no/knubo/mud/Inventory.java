@@ -1,18 +1,23 @@
 package no.knubo.mud;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -59,6 +64,32 @@ public class Inventory extends JFrame
 
 	private JLabel conAmount;
 
+	private JLabel moneyAmount;
+
+	private JLabel bankAmount;
+
+	private ImageIcon playerIcon;
+
+	private JLabel headAmount;
+
+	private JLabel neckAmount;
+
+	private JLabel backAmount;
+
+	private JLabel bodyAmount;
+
+	private JLabel handsAmount;
+
+	private JLabel fingerAmount;
+
+	private JLabel feetAmount;
+
+	private JLabel shieldAmount;
+
+	private JLabel leftAmount;
+
+	private JLabel rightAmount;
+
 	Inventory() {
 		tree = new JTree();
 		tree.setModel(this);
@@ -67,73 +98,140 @@ public class Inventory extends JFrame
 		tree.setRootVisible(false);
 		tree.addTreeExpansionListener(this);
 
-		nameLabel = new JLabel();
-		nameLabel.setFont(new Font("Lucida",Font.BOLD, 18));
+		nameLabel = new JLabel("   ");
+		nameLabel.setFont(new Font("Lucida", Font.BOLD, 18));
+		nameLabel.setForeground(Color.yellow);
 		JLabel inventoryLabel = new JLabel("Inventory");
 		JLabel statsLabel = new JLabel("Stats");
+		JLabel equipLabel = new JLabel("Equipment");
+		statsLabel.setForeground(Color.green);
+		inventoryLabel.setForeground(Color.green);
+		equipLabel.setForeground(Color.green);
 
-		JLabel lvlLabel = new JLabel("Level");
-		JLabel expLabel = new JLabel("EXP");
-		JLabel strLabel = new JLabel("STR");
-		JLabel dexLabel = new JLabel("DEX");
-		JLabel conLabel = new JLabel("CON");
-		JLabel intLabel = new JLabel("INT");
+		Font statFont = new Font("Lucida", Font.BOLD, 14);
+		statsLabel.setFont(statFont);
+		inventoryLabel.setFont(statFont);
+		equipLabel.setFont(statFont);
 
-		lvlAmount = new JLabel();
-		expAmount = new JLabel();
-		strAmount = new JLabel();
-		dexAmount = new JLabel();
-		intAmount = new JLabel();
-		conAmount = new JLabel();
+		lvlAmount = new JLabel("  ");
+		expAmount = new JLabel("  ");
+		strAmount = new JLabel("  ");
+		dexAmount = new JLabel("  ");
+		intAmount = new JLabel("  ");
+		conAmount = new JLabel("  ");
+		moneyAmount = new JLabel("  ");
+		bankAmount = new JLabel("  ");
+		zeroEQDescs();
 
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
 		GridBagConstraints displayConstraints = new GridBagConstraints();
 
+		displayConstraints.fill = GridBagConstraints.NONE;
 		displayConstraints.gridx = 0;
 		displayConstraints.gridy = 0;
 		displayConstraints.anchor = GridBagConstraints.CENTER;
-		displayConstraints.gridwidth = 3;
+		displayConstraints.gridwidth = 4;
 		gbl.setConstraints(nameLabel, displayConstraints);
+		displayConstraints.insets = new Insets(0, 0, 15, 0);
 		getContentPane().add(nameLabel);
+		displayConstraints.insets = new Insets(0, 0, 0, 0);
 
-		addLabel(inventoryLabel, gbl, displayConstraints, 2, 1);
-		displayConstraints.insets = new Insets(0,0,0,20);
+		displayConstraints.anchor = GridBagConstraints.NORTHWEST;
+		displayConstraints.gridwidth = 1;
+
+		addLabel(inventoryLabel, gbl, displayConstraints, 0, 10);
+		addLabel(equipLabel, gbl, displayConstraints, 2, 10);
+
+		displayConstraints.insets = new Insets(0, 0, 0, 20);
 		addLabel(statsLabel, gbl, displayConstraints, 0, 1);
-		addLabel(lvlLabel, gbl, displayConstraints, 0, 2);
-		addLabel(expLabel, gbl, displayConstraints, 0, 3);
-		addLabel(strLabel, gbl, displayConstraints, 0, 4);
-		addLabel(dexLabel, gbl, displayConstraints, 0, 5);
-		addLabel(conLabel, gbl, displayConstraints, 0, 6);
-		addLabel(intLabel, gbl, displayConstraints, 0, 7);
+		addLabel(new JLabel("Level"), gbl, displayConstraints, 0, 2);
+		addLabel(new JLabel("EXP"), gbl, displayConstraints, 0, 3);
+		addLabel(new JLabel("Money"), gbl, displayConstraints, 0, 4);
+		addLabel(new JLabel("Bank"), gbl, displayConstraints, 0, 5);
+		addLabel(new JLabel("STR"), gbl, displayConstraints, 0, 6);
+		addLabel(new JLabel("DEX"), gbl, displayConstraints, 0, 7);
+		addLabel(new JLabel("CON"), gbl, displayConstraints, 0, 8);
+		addLabel(new JLabel("INT"), gbl, displayConstraints, 0, 9);
+		addLabel(new JLabel("Head"), gbl, displayConstraints, 2, 11);
+		addLabel(new JLabel("Neck"), gbl, displayConstraints, 2, 12);
+		addLabel(new JLabel("Back"), gbl, displayConstraints, 2, 13);
+		addLabel(new JLabel("Body"), gbl, displayConstraints, 2, 14);
+		addLabel(new JLabel("Hands"), gbl, displayConstraints, 2, 15);
+		addLabel(new JLabel("Finger"), gbl, displayConstraints, 2, 16);
+		addLabel(new JLabel("Feet"), gbl, displayConstraints, 2, 17);
+		addLabel(new JLabel("Shield"), gbl, displayConstraints, 2, 18);
+		addLabel(new JLabel("Right arm"), gbl, displayConstraints, 2, 19);
+		addLabel(new JLabel("Left arm"), gbl, displayConstraints, 2, 20);
 
 		addLabel(lvlAmount, gbl, displayConstraints, 1, 2);
 		addLabel(expAmount, gbl, displayConstraints, 1, 3);
-		addLabel(strAmount, gbl, displayConstraints, 1, 4);
-		addLabel(dexAmount, gbl, displayConstraints, 1, 5);
-		addLabel(conAmount, gbl, displayConstraints, 1, 6);
-		addLabel(intAmount, gbl, displayConstraints, 1, 7);
+		addLabel(moneyAmount, gbl, displayConstraints, 1, 4);
+		addLabel(bankAmount, gbl, displayConstraints, 1, 5);
+		addLabel(strAmount, gbl, displayConstraints, 1, 6);
+		addLabel(dexAmount, gbl, displayConstraints, 1, 7);
+		addLabel(conAmount, gbl, displayConstraints, 1, 8);
+		addLabel(intAmount, gbl, displayConstraints, 1, 9);
+		addLabel(headAmount, gbl, displayConstraints, 3, 11);
+		addLabel(neckAmount, gbl, displayConstraints, 3, 12);
+		addLabel(backAmount, gbl, displayConstraints, 3, 13);
+		addLabel(bodyAmount, gbl, displayConstraints, 3, 14);
+		addLabel(handsAmount, gbl, displayConstraints, 3, 15);
+		addLabel(fingerAmount, gbl, displayConstraints, 3, 16);
+		addLabel(feetAmount, gbl, displayConstraints, 3, 17);
+		addLabel(shieldAmount, gbl, displayConstraints, 3, 18);
+		addLabel(rightAmount, gbl, displayConstraints, 3, 19);
+		addLabel(leftAmount, gbl, displayConstraints, 3, 20);
 
-		displayConstraints.gridx = 2;
-		displayConstraints.gridy = 2;
-		displayConstraints.gridwidth = 1;
-		displayConstraints.gridheight = 6;
+		java.net.URL imageURL = null;
+		try {
+			imageURL = new java.net.URL(
+					"http://www.vikingmud.org/knubo/proudwarrior.jpg");
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+		}
+		if (imageURL != null) {
+			playerIcon = new ImageIcon(imageURL);
+		}
+
+		displayConstraints.gridheight = 9;
+		displayConstraints.gridwidth = 3;
+		displayConstraints.anchor = GridBagConstraints.NORTHEAST;
+		addLabel(new JLabel(playerIcon), gbl, displayConstraints, 2, 1);
+
+		displayConstraints.gridheight = 1;
+
+		displayConstraints.gridx = 0;
+		displayConstraints.gridy = 11;
+		displayConstraints.gridwidth = 2;
+		displayConstraints.gridheight = 12;
 		displayConstraints.anchor = GridBagConstraints.NORTHWEST;
 		displayConstraints.fill = GridBagConstraints.BOTH;
 		displayConstraints.weightx = 1;
 		displayConstraints.weighty = 1;
 		gbl.setConstraints(tree, displayConstraints);
 		getContentPane().add(tree);
-		
-		setSize(400,400);
+
+		setSize(400, 400);
+	}
+
+	private void zeroEQDescs() {
+		headAmount = new JLabel("  ");
+		neckAmount = new JLabel("  ");
+		backAmount = new JLabel("  ");
+		bodyAmount = new JLabel("  ");
+		handsAmount = new JLabel("  ");
+		fingerAmount = new JLabel("  ");
+		feetAmount = new JLabel("  ");
+		shieldAmount = new JLabel("  ");
+		leftAmount = new JLabel("  ");
+		rightAmount = new JLabel("  ");
 	}
 
 	private void addLabel(JLabel label, GridBagLayout gbl,
 			GridBagConstraints displayConstraints, int x, int y) {
 		displayConstraints.gridx = x;
 		displayConstraints.gridy = y;
-		displayConstraints.anchor = GridBagConstraints.NORTHWEST;
-		displayConstraints.gridwidth = 1;
 		gbl.setConstraints(label, displayConstraints);
 		getContentPane().add(label);
 	}
@@ -187,6 +285,7 @@ public class Inventory extends JFrame
 		String[] lines = string.split("\r\n");
 
 		inventory.clear();
+		// zeroEQDescs();
 
 		boolean pickedFirst = false;
 
@@ -197,8 +296,8 @@ public class Inventory extends JFrame
 			if (line.length() == 0) {
 				continue;
 			}
-			
-			if(!pickedFirst) {
+
+			if (!pickedFirst) {
 				pickedFirst = true;
 				setStats(line);
 				continue;
@@ -228,18 +327,65 @@ public class Inventory extends JFrame
 					container.add(item);
 				}
 			} else {
+				showAsEQ(item);
 				inventory.add(item);
 			}
 		}
 	}
+	private void showAsEQ(Item item) {
+		if (item instanceof Weapon) {
+			Weapon wep = (Weapon) item;
+
+			switch (wep.getWield()) {
+				case 'L' :
+					leftAmount.setText(wep.getShortdesc());
+					break;
+				case 'B' :
+					/* Fallthrough */
+				case 'R' :
+					rightAmount.setText(wep.getShortdesc());
+					break;
+			}
+		}
+
+		if (item instanceof Armour) {
+			Armour arm = (Armour) item;
+
+			if (!arm.isWorn()) {
+				return;
+			}
+
+			String shortdesc = arm.getShortdesc();
+			String armourType = arm.getArmourType();
+
+			if (armourType.equals("armour")) {
+				bodyAmount.setText(shortdesc);
+			} else if (armourType.equals("amulet")) {
+				neckAmount.setText(shortdesc);
+			} else if (armourType.equals("helmet")) {
+				headAmount.setText(shortdesc);
+			} else if (armourType.equals("glove")) {
+				handsAmount.setText(shortdesc);
+			} else if (armourType.equals("cloak")) {
+				backAmount.setText(shortdesc);
+			} else if (armourType.equals("ring")) {
+				fingerAmount.setText(shortdesc);
+			} else if (armourType.equals("boot")) {
+				feetAmount.setText(shortdesc);
+			} else if (armourType.equals("shield")) {
+				shieldAmount.setText(shortdesc);
+			}
+		}
+	}
+
 	private void setStats(String string) {
 		String[] stats = string.split(ESC);
 
 		nameLabel.setText(stats[0]);
 		lvlAmount.setText(stats[1]);
 		expAmount.setText(stats[2]);
-		// money 3
-		// bank 4
+		moneyAmount.setText(stats[3]);
+		bankAmount.setText(stats[4]);
 		strAmount.setText(Integer.parseInt(stats[5])
 				+ Integer.parseInt(stats[6]) + "(" + stats[5] + ")");
 		dexAmount.setText(Integer.parseInt(stats[7])
@@ -383,7 +529,29 @@ public class Inventory extends JFrame
 		if (objs.length == 2) {
 			bagsOpen.add(objs[1]);
 		}
+	}
 
+	public static void main(String[] args) {
+		UIStuff.setupUI();
+		Inventory f = new Inventory();
+		f.setVisible(true);
+
+		f.nameLabel.setText("Knubo");
+		f.lvlAmount.setText("40");
+		f.dexAmount.setText("29");
+		f.intAmount.setText("29");
+		f.conAmount.setText("29");
+		f.strAmount.setText("29");
+		f.expAmount.setText("290101");
+		f.moneyAmount.setText("424242");
+		f.bankAmount.setText("424242");
+		f.addWindowListener(new WindowAdapter() {
+
+			public void windowClosed(WindowEvent e) {
+				System.exit(0);
+			}
+
+		});
 	}
 
 }

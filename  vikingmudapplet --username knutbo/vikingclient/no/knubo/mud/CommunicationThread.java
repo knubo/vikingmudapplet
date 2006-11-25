@@ -415,8 +415,32 @@ class CommunicationThread implements Runnable, KeyListener {
 			textPane.appendPlain(history.allHistory(), Color.WHITE);
 			return true;
 		}
+
+		if (raw.equals("#aliasedit")) {
+			aliases.setVisible(!aliases.isVisible());
+			return true;
+		}
+
+		if (raw.startsWith("#alias")) {
+			if (raw.equals("#alias")) {
+				textPane.appendPlain(aliases.toString(), Color.white);
+			} else if (aliases.addAlias(raw)) {
+				textPane.appendPlain("OK", Color.WHITE);
+			} else {
+				textPane.appendPlain("Alias sytax: #alias <alias> <whatever>.",
+						Color.RED);
+			}
+			return true;
+		}
+
+		if (raw.equals("#inv")) {
+			inventory.setVisible(!inventory.isVisible());
+			return true;
+		}
+
 		return false;
 	}
+
 	private String[] calcReps(String raw) {
 		if (!raw.startsWith("#") || raw.length() < 3) {
 			return new String[]{raw, "1"};

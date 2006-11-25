@@ -282,7 +282,7 @@ class AliasrecorderImpl extends JFrame
 				sb.append(";");
 			}
 		}
-		if (!alias.addAlias(name, sb.toString())) {
+		if (!alias.addAlias(name, sb.toString(), true)) {
 			JOptionPane
 					.showMessageDialog(this,
 							"Provided alias name is already used, please use some other one.");

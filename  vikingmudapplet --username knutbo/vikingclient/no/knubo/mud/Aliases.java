@@ -76,12 +76,12 @@ class Aliases extends JFrame implements ActionListener, Alias {
 		return (String) aliases.get(action);
 	}
 
-	public boolean addAlias(String id, String value) {
-		
-		if(aliases.containsKey(id)) {
+	public boolean addAlias(String id, String value, boolean checkForDuplicates) {
+
+		if (checkForDuplicates && aliases.containsKey(id)) {
 			return false;
 		}
-		
+
 		int len = textPane.getDocument().getLength();
 		textPane.setCaretPosition(len);
 		textPane.replaceSelection("\n" + id + "=" + value);
@@ -117,5 +117,24 @@ class Aliases extends JFrame implements ActionListener, Alias {
 		}
 
 		return true;
+	}
+
+	public boolean addAlias(String raw) {
+		int firstSpace = raw.indexOf(' ');
+		int nextSpace = raw.indexOf(' ', firstSpace + 1);
+		String command = raw.substring(firstSpace, nextSpace).trim();
+		String value = raw.substring(nextSpace).trim();
+
+		if (command.length() == 0 || value.length() == 0) {
+			return false;
+		}
+
+		addAlias(command, value, false);
+
+		return true;
+	}
+
+	public String toString() {
+		return "Aliases:\n" + aliases.toString() + "\n";
 	}
 }

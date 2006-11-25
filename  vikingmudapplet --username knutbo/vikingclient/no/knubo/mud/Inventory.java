@@ -10,14 +10,12 @@ import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTree;
@@ -68,8 +66,6 @@ public class Inventory extends JFrame
 
 	private JLabel bankAmount;
 
-	private ImageIcon playerIcon;
-
 	private JLabel headAmount;
 
 	private JLabel neckAmount;
@@ -89,6 +85,8 @@ public class Inventory extends JFrame
 	private JLabel leftAmount;
 
 	private JLabel rightAmount;
+
+	private JLabel playerIconLabel;
 
 	Inventory() {
 		tree = new JTree();
@@ -183,21 +181,11 @@ public class Inventory extends JFrame
 		addLabel(rightAmount, gbl, displayConstraints, 3, 19);
 		addLabel(leftAmount, gbl, displayConstraints, 3, 20);
 
-		java.net.URL imageURL = null;
-		try {
-			imageURL = new java.net.URL(
-					"http://www.vikingmud.org/knubo/proudwarrior.jpg");
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		}
-		if (imageURL != null) {
-			playerIcon = new ImageIcon(imageURL);
-		}
-
 		displayConstraints.gridheight = 9;
 		displayConstraints.gridwidth = 3;
 		displayConstraints.anchor = GridBagConstraints.NORTHEAST;
-		addLabel(new JLabel(playerIcon), gbl, displayConstraints, 2, 1);
+		playerIconLabel = new JLabel();
+		addLabel(playerIconLabel, gbl, displayConstraints, 2, 1);
 
 		displayConstraints.gridheight = 1;
 
@@ -395,6 +383,8 @@ public class Inventory extends JFrame
 		conAmount.setText(Integer.parseInt(stats[11])
 				+ Integer.parseInt(stats[12]) + "(" + stats[11] + ")");
 
+		playerIconLabel.setIcon(ImageFactory.getImageIcon(stats[13]));
+		playerIconLabel.repaint();
 	}
 
 	private Item createItem(String[] data) {

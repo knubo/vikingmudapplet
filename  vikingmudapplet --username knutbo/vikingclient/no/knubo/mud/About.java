@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.25";
+	final static String LATEST = "0.27";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -14,12 +14,15 @@ class About {
 	}
 	public static String greetingText() {
 		return "==========================================\n"
-				+ "Viking Mud Online Client " + LATEST + "\n"
+				+ "Viking Mud Online Client "
+				+ LATEST
+				+ "\n"
 				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
 				+ "==========================================\n\n"
 				+ "To play the game, select the game menu in the "
 				+ "top and select 'Login as guest' or 'Just login'. "
-				+ "See menu Help -> Client for even more details.\n";
+				+ "See menu Help -> Client for even more details.\n"
+				+ "Be nice, have a good time, play one character at a time! (For more detailed rules, look at help rules).";
 	}
 
 	public static String aboutInfo() {
@@ -57,8 +60,9 @@ class About {
 				+ "0.21 Added 'add reversed' button to aliasrecorder and made it more robust."
 				+ "0.22 Added an inventory window which needs a lot of work :-)\n"
 				+ "0.23 Made a v1.0 of the inventory window which looks like crap but work.\n"
-				+ "0.24 Tried to remove even more telnet noise.\n" + 
-				LATEST+ " Added some colors to stuff and more inventory/stats things."
-				+ "\n";
+				+ "0.24 Tried to remove even more telnet noise.\n"
+				+ "0.25 Added some colors to stuff and more inventory/stats things.\n"
+				+ "0.26 Images in inventory are now decided from the mud side.\n"
+				+ LATEST + " Added commands: #alias, #aliasedit, #inv" + "\n";
 	}
 }

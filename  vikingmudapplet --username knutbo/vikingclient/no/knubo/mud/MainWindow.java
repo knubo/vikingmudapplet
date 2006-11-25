@@ -219,7 +219,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
 					history, this.aliasFrame, this.aliasRecordFrame,
-					this.inventoryFrame);
+					this.inventoryFrame,this.textInput);
 
 			this.textInput.addKeyListener(communicationThread);
 		}

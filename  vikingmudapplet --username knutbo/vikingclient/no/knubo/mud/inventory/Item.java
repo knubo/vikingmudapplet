@@ -1,5 +1,7 @@
 package no.knubo.mud.inventory;
 
+import javax.swing.Icon;
+
 public class Item implements Cloneable {
 
 	private final boolean tagged;
@@ -64,6 +66,10 @@ public class Item implements Cloneable {
 
 	public int hashCode() {
 		return id * 41;
+	}
+
+	public Icon getImageIcon() {
+		return null;
 	}
 
 }

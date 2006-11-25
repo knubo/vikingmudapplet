@@ -1,5 +1,9 @@
 package no.knubo.mud.inventory;
 
+import javax.swing.Icon;
+
+import no.knubo.mud.ImageFactory;
+
 
 public class Weapon extends Item implements Cloneable {
 
@@ -22,5 +26,9 @@ public class Weapon extends Item implements Cloneable {
 
 	public char getWield() {
 		return wield;
+	}
+	
+	public Icon getImageIcon() {
+		return ImageFactory.getImageIcon("sword.gif");
 	}
 }

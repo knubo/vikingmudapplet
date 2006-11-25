@@ -3,6 +3,10 @@ package no.knubo.mud.inventory;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.Icon;
+
+import no.knubo.mud.ImageFactory;
+
 public class Container extends Item implements Cloneable {
 
 	List contains = new LinkedList();
@@ -34,5 +38,12 @@ public class Container extends Item implements Cloneable {
 	public int getIndex(Object child) {
 		return contains.indexOf(child);
 	}
+
+	public Icon getImageIcon() {
+		return ImageFactory.getImageIcon("bag.gif");
+	}
+
+	
+	
 
 }

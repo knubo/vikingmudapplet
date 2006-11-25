@@ -94,8 +94,8 @@ public class Inventory extends JFrame
 		tree.setEditable(false);
 		tree.setDoubleBuffered(true);
 		tree.setRootVisible(false);
-		tree.addTreeExpansionListener(this);
-
+		tree.setCellRenderer(new InventoryTreeRenderer());
+		
 		nameLabel = new JLabel("   ");
 		nameLabel.setFont(new Font("Lucida", Font.BOLD, 18));
 		nameLabel.setForeground(Color.yellow);

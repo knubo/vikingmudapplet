@@ -50,14 +50,16 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final Inventory inventory;
 
 	private boolean loginComplete = false;
+	private final JTextArea textInput;
 
 	CommunicationThread(ColorPane textPane, History history, Alias aliases,
-			Aliasrecorder aliasRecorder, Inventory inventory) {
+			Aliasrecorder aliasRecorder, Inventory inventory, JTextArea textInput) {
 		this.textPane = textPane;
 		this.history = history;
 		this.aliases = aliases;
 		this.aliasRecorder = aliasRecorder;
 		this.inventory = inventory;
+		this.textInput = textInput;
 		currentColor = Color.WHITE;
 		setupColorCodes();
 		startupLists = new LinkedList();
@@ -435,6 +437,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		if (raw.equals("#inv")) {
 			inventory.setVisible(!inventory.isVisible());
+			textInput.requestFocus();
 			return true;
 		}
 

@@ -34,7 +34,7 @@ public class ImageFactory {
 	public static Icon getImageIcon(String imageFileName, boolean tagged) {
 		java.net.URL imageURL = null;
 
-		Font smallfont = new Font("Verdana",Font.BOLD, 12);
+		Font smallfont = new Font("Verdana",Font.BOLD, 9);
 		
 		ImageIcon cached = (ImageIcon) images.get(imageFileName + tagged);
 
@@ -55,7 +55,7 @@ public class ImageFactory {
 			Graphics graphics = bi.getGraphics();
 			graphics.setColor(Color.BLUE);
 			graphics.setFont(smallfont);
-			graphics.drawString("T", bi.getWidth() - 15, bi.getHeight() - 3);
+			graphics.drawString("x", 20, 20);
 
 			ImageIcon im = new ImageIcon(bi);
 			images.put(imageFileName + tagged, im);
@@ -148,6 +148,9 @@ public class ImageFactory {
 
 		// Get the image's color model
 		ColorModel cm = pg.getColorModel();
+		if(cm == null) {
+			return false;
+		}
 		return cm.hasAlpha();
 	}
 }

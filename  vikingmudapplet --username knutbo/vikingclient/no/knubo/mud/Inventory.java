@@ -211,6 +211,7 @@ public class Inventory extends JFrame
 		displayConstraints.weightx = 1;
 		displayConstraints.weighty = 1;
 
+		displayConstraints.insets = new Insets(0, 10, 10, 10);
 		JScrollPane scrollPane = new JScrollPane(tree);
 		gbl.setConstraints(scrollPane, displayConstraints);
 		getContentPane().add(scrollPane);

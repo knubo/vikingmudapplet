@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.32";
+	final static String LATEST = "0.34";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -22,7 +22,7 @@ class About {
 				+ "To play the game, select the game menu in the "
 				+ "top and select 'Login as guest' or 'Just login'. "
 				+ "See menu Help -> Client for even more details.\n"
-				+ "Be nice, have a good time, play one character at a time! (For more detailed rules, look at help rules).";
+				+ "Be nice, have a good time, play one character at a time! (For more detailed rules, look at help rules).\n";
 	}
 
 	public static String aboutInfo() {
@@ -67,7 +67,8 @@ class About {
 				+ "0.28 Focus cosmetics and about fix.\n"
 				+ "0.29 Added images to inventory treeview.\n"
 				+ "0.30 Set fonts for inventory window.\n"
-				+ "0.32 Some inventory enhancements.\n" + LATEST
-				+ " Made some tagged graphics. " + "\n";
+				+ "0.32 Some inventory enhancements.\n"
+				+ "0.33 Made some tagged graphics.\n" + LATEST
+				+ " Added color for wear out in inventory." + "\n";
 	}
 }

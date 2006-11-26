@@ -19,8 +19,10 @@ public class InventoryTreeRenderer extends DefaultTreeCellRenderer {
 		if (value instanceof Item) {
 			Item item = (Item) value;
 			setIcon(item.getImageIcon());
+			
+			setForeground(item.colorWornOut());
 		 } else {
-			setIcon(null);
+			 setIcon(null);
 		}
 		return this;
 	}

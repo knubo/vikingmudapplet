@@ -26,6 +26,8 @@ public class ImageFactory {
 
 	static Map images = new HashMap();
 	static Set fixedImages = new HashSet();
+	static final Font smallfont = new Font("Verdana", Font.BOLD, 9);
+	static final Color taggedColor = new Color(0x3A, 0x6E, 0xA5);
 
 	public static Icon getImageIcon(String imageFileName) {
 		return getImageIcon(imageFileName, false);
@@ -34,14 +36,12 @@ public class ImageFactory {
 	public static Icon getImageIcon(String imageFileName, boolean tagged) {
 		java.net.URL imageURL = null;
 
-		Font smallfont = new Font("Verdana",Font.BOLD, 9);
-		
 		ImageIcon cached = (ImageIcon) images.get(imageFileName + tagged);
 
 		if (cached != null
 				&& cached.getImageLoadStatus() == MediaTracker.COMPLETE) {
 
-			 if (!tagged || fixedImages.contains(imageFileName)) {
+			if (!tagged || fixedImages.contains(imageFileName)) {
 				return cached;
 			}
 			/*
@@ -53,7 +53,7 @@ public class ImageFactory {
 			BufferedImage bi = toBufferedImage(cached.getImage());
 
 			Graphics graphics = bi.getGraphics();
-			graphics.setColor(Color.BLUE);
+			graphics.setColor(taggedColor);
 			graphics.setFont(smallfont);
 			graphics.drawString("x", 20, 20);
 
@@ -148,7 +148,7 @@ public class ImageFactory {
 
 		// Get the image's color model
 		ColorModel cm = pg.getColorModel();
-		if(cm == null) {
+		if (cm == null) {
 			return false;
 		}
 		return cm.hasAlpha();

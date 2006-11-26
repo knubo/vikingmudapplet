@@ -40,7 +40,7 @@ public class Container extends Item implements Cloneable {
 	}
 
 	public Icon getImageIcon() {
-		return ImageFactory.getImageIcon("bag.gif");
+		return ImageFactory.getImageIcon("bag.gif", isTagged());
 	}
 
 	

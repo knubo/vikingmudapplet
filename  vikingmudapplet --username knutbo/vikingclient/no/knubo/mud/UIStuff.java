@@ -69,6 +69,8 @@ public class UIStuff {
 
 		Color bgPanel = new Color(0xCC, 0x33, 0x00);
 		Color bgColor = new Color(0x99, 0x00, 0x00);
+		Color treeColor = new Color(0x82, 0x00, 0x00);
+
 		UIManager.put("Button.background", bgColor);
 		UIManager.put("Panel.background", bgColor);
 
@@ -77,8 +79,8 @@ public class UIStuff {
 
 		UIManager.put("Label.foreground", Color.white);
 
-		UIManager.put("Tree.background", bgColor);
-		UIManager.put("Tree.textBackground", bgColor);
+		UIManager.put("Tree.background", treeColor);
+		UIManager.put("Tree.textBackground", treeColor);
 		UIManager.put("Tree.textForeground", Color.white);
 
 		UIManager.put("Table.background", bgPanel);

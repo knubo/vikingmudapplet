@@ -18,6 +18,7 @@ import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
@@ -95,7 +96,7 @@ public class Inventory extends JFrame
 		tree.setDoubleBuffered(true);
 		tree.setRootVisible(false);
 		tree.setCellRenderer(new InventoryTreeRenderer());
-		
+
 		nameLabel = new JLabel("   ");
 		nameLabel.setFont(new Font("Lucida", Font.BOLD, 18));
 		nameLabel.setForeground(Color.yellow);
@@ -107,19 +108,20 @@ public class Inventory extends JFrame
 		equipLabel.setForeground(Color.green);
 
 		Font statFont = new Font("Lucida", Font.BOLD, 14);
+		Font otherFont = new Font("Lucida", Font.BOLD, 12);
 		statsLabel.setFont(statFont);
 		inventoryLabel.setFont(statFont);
 		equipLabel.setFont(statFont);
 
-		lvlAmount = new JLabel("  ");
-		expAmount = new JLabel("  ");
-		strAmount = new JLabel("  ");
-		dexAmount = new JLabel("  ");
-		intAmount = new JLabel("  ");
-		conAmount = new JLabel("  ");
-		moneyAmount = new JLabel("  ");
-		bankAmount = new JLabel("  ");
-		zeroEQDescs();
+		lvlAmount = newLabel(otherFont);
+		expAmount = newLabel(otherFont);
+		strAmount = newLabel(otherFont);
+		dexAmount = newLabel(otherFont);
+		intAmount = newLabel(otherFont);
+		conAmount = newLabel(otherFont);
+		moneyAmount = newLabel(otherFont);
+		bankAmount = newLabel(otherFont);
+		zeroEQDescs(otherFont);
 
 		GridBagLayout gbl = new GridBagLayout();
 		setLayout(gbl);
@@ -138,29 +140,37 @@ public class Inventory extends JFrame
 		displayConstraints.anchor = GridBagConstraints.NORTHWEST;
 		displayConstraints.gridwidth = 1;
 
-		addLabel(inventoryLabel, gbl, displayConstraints, 0, 10);
 		addLabel(equipLabel, gbl, displayConstraints, 2, 10);
 
-		displayConstraints.insets = new Insets(0, 0, 0, 20);
+		displayConstraints.insets = new Insets(0, 10, 0, 20);
+		addLabel(inventoryLabel, gbl, displayConstraints, 0, 10);
 		addLabel(statsLabel, gbl, displayConstraints, 0, 1);
-		addLabel(new JLabel("Level"), gbl, displayConstraints, 0, 2);
-		addLabel(new JLabel("EXP"), gbl, displayConstraints, 0, 3);
-		addLabel(new JLabel("Money"), gbl, displayConstraints, 0, 4);
-		addLabel(new JLabel("Bank"), gbl, displayConstraints, 0, 5);
-		addLabel(new JLabel("STR"), gbl, displayConstraints, 0, 6);
-		addLabel(new JLabel("DEX"), gbl, displayConstraints, 0, 7);
-		addLabel(new JLabel("CON"), gbl, displayConstraints, 0, 8);
-		addLabel(new JLabel("INT"), gbl, displayConstraints, 0, 9);
-		addLabel(new JLabel("Head"), gbl, displayConstraints, 2, 11);
-		addLabel(new JLabel("Neck"), gbl, displayConstraints, 2, 12);
-		addLabel(new JLabel("Back"), gbl, displayConstraints, 2, 13);
-		addLabel(new JLabel("Body"), gbl, displayConstraints, 2, 14);
-		addLabel(new JLabel("Hands"), gbl, displayConstraints, 2, 15);
-		addLabel(new JLabel("Finger"), gbl, displayConstraints, 2, 16);
-		addLabel(new JLabel("Feet"), gbl, displayConstraints, 2, 17);
-		addLabel(new JLabel("Shield"), gbl, displayConstraints, 2, 18);
-		addLabel(new JLabel("Right arm"), gbl, displayConstraints, 2, 19);
-		addLabel(new JLabel("Left arm"), gbl, displayConstraints, 2, 20);
+		addLabel(newLabel("Level", otherFont), gbl, displayConstraints, 0, 2);
+		addLabel(newLabel("Experience", otherFont), gbl, displayConstraints, 0,
+				3);
+		addLabel(newLabel("Money", otherFont), gbl, displayConstraints, 0, 4);
+		addLabel(newLabel("Bank", otherFont), gbl, displayConstraints, 0, 5);
+		addLabel(newLabel("Strength", otherFont), gbl, displayConstraints, 0, 6);
+		addLabel(newLabel("Dexterity", otherFont), gbl, displayConstraints, 0,
+				7);
+		addLabel(newLabel("Constitution", otherFont), gbl, displayConstraints,
+				0, 8);
+		addLabel(newLabel("Intelligence", otherFont), gbl, displayConstraints,
+				0, 9);
+
+		displayConstraints.insets = new Insets(0, 0, 0, 0);
+		addLabel(newLabel("Head", otherFont), gbl, displayConstraints, 2, 11);
+		addLabel(newLabel("Neck", otherFont), gbl, displayConstraints, 2, 12);
+		addLabel(newLabel("Back", otherFont), gbl, displayConstraints, 2, 13);
+		addLabel(newLabel("Body", otherFont), gbl, displayConstraints, 2, 14);
+		addLabel(newLabel("Hands", otherFont), gbl, displayConstraints, 2, 15);
+		addLabel(newLabel("Finger", otherFont), gbl, displayConstraints, 2, 16);
+		addLabel(newLabel("Feet", otherFont), gbl, displayConstraints, 2, 17);
+		addLabel(newLabel("Shield", otherFont), gbl, displayConstraints, 2, 18);
+		addLabel(newLabel("Right arm", otherFont), gbl, displayConstraints, 2,
+				19);
+		addLabel(newLabel("Left arm", otherFont), gbl, displayConstraints, 2,
+				20);
 
 		addLabel(lvlAmount, gbl, displayConstraints, 1, 2);
 		addLabel(expAmount, gbl, displayConstraints, 1, 3);
@@ -170,6 +180,8 @@ public class Inventory extends JFrame
 		addLabel(dexAmount, gbl, displayConstraints, 1, 7);
 		addLabel(conAmount, gbl, displayConstraints, 1, 8);
 		addLabel(intAmount, gbl, displayConstraints, 1, 9);
+
+		displayConstraints.insets = new Insets(0, 0, 0, 10);
 		addLabel(headAmount, gbl, displayConstraints, 3, 11);
 		addLabel(neckAmount, gbl, displayConstraints, 3, 12);
 		addLabel(backAmount, gbl, displayConstraints, 3, 13);
@@ -185,6 +197,7 @@ public class Inventory extends JFrame
 		displayConstraints.gridwidth = 3;
 		displayConstraints.anchor = GridBagConstraints.NORTHEAST;
 		playerIconLabel = new JLabel();
+		displayConstraints.insets = new Insets(0, 0, 0, 10);
 		addLabel(playerIconLabel, gbl, displayConstraints, 2, 1);
 
 		displayConstraints.gridheight = 1;
@@ -197,23 +210,37 @@ public class Inventory extends JFrame
 		displayConstraints.fill = GridBagConstraints.BOTH;
 		displayConstraints.weightx = 1;
 		displayConstraints.weighty = 1;
-		gbl.setConstraints(tree, displayConstraints);
-		getContentPane().add(tree);
+
+		JScrollPane scrollPane = new JScrollPane(tree);
+		gbl.setConstraints(scrollPane, displayConstraints);
+		getContentPane().add(scrollPane);
 
 		setSize(400, 400);
 	}
 
-	private void zeroEQDescs() {
-		headAmount = new JLabel("  ");
-		neckAmount = new JLabel("  ");
-		backAmount = new JLabel("  ");
-		bodyAmount = new JLabel("  ");
-		handsAmount = new JLabel("  ");
-		fingerAmount = new JLabel("  ");
-		feetAmount = new JLabel("  ");
-		shieldAmount = new JLabel("  ");
-		leftAmount = new JLabel("  ");
-		rightAmount = new JLabel("  ");
+	private JLabel newLabel(String string, Font otherFont) {
+		JLabel label = new JLabel(string);
+		label.setFont(otherFont);
+		return label;
+	}
+
+	private JLabel newLabel(Font otherFont) {
+		JLabel label = new JLabel("  ");
+		label.setFont(otherFont);
+		return label;
+	}
+
+	private void zeroEQDescs(Font otherFont) {
+		headAmount = newLabel(otherFont);
+		neckAmount = newLabel(otherFont);
+		backAmount = newLabel(otherFont);
+		bodyAmount = newLabel(otherFont);
+		handsAmount = newLabel(otherFont);
+		fingerAmount = newLabel(otherFont);
+		feetAmount = newLabel(otherFont);
+		shieldAmount = newLabel(otherFont);
+		leftAmount = newLabel(otherFont);
+		rightAmount = newLabel(otherFont);
 	}
 
 	private void addLabel(JLabel label, GridBagLayout gbl,
@@ -326,12 +353,12 @@ public class Inventory extends JFrame
 
 			switch (wep.getWield()) {
 				case 'L' :
-					leftAmount.setText(wep.getShortdesc());
+					leftAmount.setText(limit20(wep.getShortdesc()));
 					break;
 				case 'B' :
 					/* Fallthrough */
 				case 'R' :
-					rightAmount.setText(wep.getShortdesc());
+					rightAmount.setText(limit20(wep.getShortdesc()));
 					break;
 			}
 		}
@@ -344,6 +371,8 @@ public class Inventory extends JFrame
 			}
 
 			String shortdesc = arm.getShortdesc();
+
+			shortdesc = limit20(shortdesc);
 			String armourType = arm.getArmourType();
 
 			if (armourType.equals("armour")) {
@@ -364,6 +393,13 @@ public class Inventory extends JFrame
 				shieldAmount.setText(shortdesc);
 			}
 		}
+	}
+
+	private String limit20(String shortdesc) {
+		if (shortdesc.length() > 20) {
+			return shortdesc.substring(0, 17) + "...";
+		}
+		return shortdesc;
 	}
 
 	private void setStats(String string) {

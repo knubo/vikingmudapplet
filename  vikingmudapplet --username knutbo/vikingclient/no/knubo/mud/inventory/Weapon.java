@@ -29,6 +29,6 @@ public class Weapon extends Item implements Cloneable {
 	}
 	
 	public Icon getImageIcon() {
-		return ImageFactory.getImageIcon("sword.gif");
+		return ImageFactory.getImageIcon("sword.gif", isTagged());
 	}
 }

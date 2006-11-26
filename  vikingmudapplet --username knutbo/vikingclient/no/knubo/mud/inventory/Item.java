@@ -2,6 +2,8 @@ package no.knubo.mud.inventory;
 
 import javax.swing.Icon;
 
+import no.knubo.mud.ImageFactory;
+
 public class Item implements Cloneable {
 
 	private final boolean tagged;
@@ -28,11 +30,15 @@ public class Item implements Cloneable {
 	}
 
 	public String toString() {
-		return (tagged ? "*" : "") + shortdesc
+		return getShortdesc() 
 				+ (count > 1 ? "[" + count + "]" : "");
 	}
+
 	public String getShortdesc() {
-		return shortdesc;
+		if (shortdesc.length() < 2) {
+			return shortdesc.toUpperCase();
+		}
+		return shortdesc.substring(0, 1).toUpperCase() + shortdesc.substring(1);
 	}
 
 	public boolean isTagged() {
@@ -59,9 +65,9 @@ public class Item implements Cloneable {
 		return n.getType() == getType() && n.isTagged() == isTagged()
 				&& n.getShortdesc().equals(getShortdesc());
 	}
-	
+
 	public boolean equals(Object obj) {
-		return ((Item)obj).id == id;
+		return ((Item) obj).id == id;
 	}
 
 	public int hashCode() {
@@ -69,7 +75,7 @@ public class Item implements Cloneable {
 	}
 
 	public Icon getImageIcon() {
-		return null;
+		return ImageFactory.getImageIcon("empty.gif", isTagged());
 	}
 
 }

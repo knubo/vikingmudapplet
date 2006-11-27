@@ -1,8 +1,5 @@
 package no.knubo.mud.inventory;
 
-import javax.swing.Icon;
-
-import no.knubo.mud.ImageFactory;
 
 public class Armour extends Item implements Cloneable {
 
@@ -10,8 +7,8 @@ public class Armour extends Item implements Cloneable {
 	private final String armourType;
 
 	public Armour(int id, boolean tagged, String shortdesc, int wornOut,
-			char type, boolean worn, String armourType) {
-		super(id, tagged, shortdesc, wornOut, type);
+			char type, boolean worn, String armourType, String image) {
+		super(id, tagged, shortdesc, wornOut, type, image);
 		this.worn = worn;
 		this.armourType = armourType;
 	}
@@ -30,26 +27,5 @@ public class Armour extends Item implements Cloneable {
 
 	public boolean isWorn() {
 		return worn;
-	}
-
-	public Icon getImageIcon() {
-		if (armourType.equals("armour")) {
-			return ImageFactory.getImageIcon("body.gif", isTagged());
-		} else if (armourType.equals("amulet")) {
-			return ImageFactory.getImageIcon("amulet.gif", isTagged());
-		} else if (armourType.equals("helmet")) {
-			return ImageFactory.getImageIcon("helmet.gif", isTagged());
-		} else if (armourType.equals("glove")) {
-			return ImageFactory.getImageIcon("hands.gif", isTagged());
-		} else if (armourType.equals("cloak")) {
-			return ImageFactory.getImageIcon("cloak.gif", isTagged());
-		} else if (armourType.equals("ring")) {
-			return ImageFactory.getImageIcon("ring.gif", isTagged());
-		} else if (armourType.equals("boot")) {
-			return ImageFactory.getImageIcon("boots.gif", isTagged());
-		} else if (armourType.equals("shield")) {
-			return ImageFactory.getImageIcon("shield.gif", isTagged());
-		}
-		return super.getImageIcon();
 	}
 }

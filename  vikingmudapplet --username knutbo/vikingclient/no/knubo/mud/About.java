@@ -69,6 +69,6 @@ class About {
 				+ "0.30 Set fonts for inventory window.\n"
 				+ "0.32 Some inventory enhancements.\n"
 				+ "0.33 Made some tagged graphics.\n" + LATEST
-				+ " Added color for wear out in inventory." + "\n";
+				+ " Added color for wear out in inventory.\n";
 	}
 }

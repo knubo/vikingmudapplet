@@ -1,5 +1,7 @@
 package no.knubo.mud.inventory;
 
+import java.awt.Color;
+
 import javax.swing.Icon;
 
 import no.knubo.mud.ImageFactory;
@@ -13,12 +15,23 @@ public class Item implements Cloneable {
 	private int count;
 	private final int id;
 
-	public Item(int id, boolean tagged, String shortdesc, int wornOut, char type) {
+	final static Color[] wornOutCols = {Color.WHITE,
+			new Color(0xCC, 0xCC, 0xCC),
+			new Color(0xAA, 0xCC, 0xAA),
+			new Color(0x80, 0x80, 0x80),
+			new Color(0x60, 0x60, 0x60),
+			new Color(0x30, 0x30, 0x30),
+			Color.BLACK,
+			};
+	private final String image;
+
+	public Item(int id, boolean tagged, String shortdesc, int wornOut, char type, String image) {
 		this.id = id;
 		this.tagged = tagged;
 		this.shortdesc = shortdesc;
 		this.wornOut = wornOut;
 		this.type = type;
+		this.image = image;
 	}
 
 	public Item copy() {
@@ -30,8 +43,7 @@ public class Item implements Cloneable {
 	}
 
 	public String toString() {
-		return getShortdesc() 
-				+ (count > 1 ? "[" + count + "]" : "");
+		return getShortdesc() + (count > 1 ? "[" + count + "]" : "");
 	}
 
 	public String getShortdesc() {
@@ -75,7 +87,12 @@ public class Item implements Cloneable {
 	}
 
 	public Icon getImageIcon() {
-		return ImageFactory.getImageIcon("empty.gif", isTagged());
+		return ImageFactory.getImageIcon(image, isTagged());
+	}
+
+	public Color colorWornOut() {
+
+		return wornOutCols[wornOut];
 	}
 
 }

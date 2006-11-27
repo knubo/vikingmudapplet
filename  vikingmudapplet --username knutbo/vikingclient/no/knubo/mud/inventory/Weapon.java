@@ -1,17 +1,12 @@
 package no.knubo.mud.inventory;
 
-import javax.swing.Icon;
-
-import no.knubo.mud.ImageFactory;
-
-
 public class Weapon extends Item implements Cloneable {
 
 	private final char wield;
 
 	public Weapon(int id, boolean tagged, String shortdesc, int wornOut, char type,
-			char wield) {
-		super(id, tagged, shortdesc, wornOut, type);
+			char wield, String image) {
+		super(id, tagged, shortdesc, wornOut, type, image);
 		this.wield = wield;
 
 	}
@@ -28,7 +23,4 @@ public class Weapon extends Item implements Cloneable {
 		return wield;
 	}
 	
-	public Icon getImageIcon() {
-		return ImageFactory.getImageIcon("sword.gif", isTagged());
-	}
 }

@@ -53,7 +53,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final JTextArea textInput;
 
 	CommunicationThread(ColorPane textPane, History history, Alias aliases,
-			Aliasrecorder aliasRecorder, Inventory inventory, JTextArea textInput) {
+			Aliasrecorder aliasRecorder, Inventory inventory,
+			JTextArea textInput) {
 		this.textPane = textPane;
 		this.history = history;
 		this.aliases = aliases;
@@ -101,7 +102,6 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void run() {
 		try {
-			loginComplete = false;
 			leftovers = null;
 			vikingSocket = new Socket("connect.vikingmud.org", 2001);
 			vikingOut = new PrintStream(vikingSocket.getOutputStream(), true);
@@ -129,6 +129,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		} catch (IOException e) {
 			textPane.setText(e.getMessage());
 		}
+		loginComplete = false;
 		textPane.appendPlain("Connection to mud closed.\n", Color.WHITE);
 		System.out.println("Socket loop ended");
 	}
@@ -466,6 +467,10 @@ class CommunicationThread implements Runnable, KeyListener {
 	public void loginGuest() {
 		startupLists.add("guest");
 
+	}
+
+	public boolean isLoginComplete() {
+		return loginComplete;
 	}
 
 }

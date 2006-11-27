@@ -430,6 +430,7 @@ public class Inventory extends JFrame
 		String shortdesc = data[1].substring(1);
 		char type = data[2].charAt(0);
 		int wornOut = Integer.parseInt(data[3]);
+		String image = data[4];
 		boolean worn = false;
 		char wield = 0;
 
@@ -437,26 +438,27 @@ public class Inventory extends JFrame
 
 		switch (type) {
 			case 'W' :
-				if (data.length >= 5) {
-					wield = data[4].charAt(0);
+				if (data.length >= 6) {
+					wield = data[5].charAt(0);
 				}
-				return new Weapon(id, tagged, shortdesc, wornOut, type, wield);
+				return new Weapon(id, tagged, shortdesc, wornOut, type, wield,
+						image);
 			case 'A' :
-				worn = data[4].charAt(0) == '*';
+				worn = data[5].charAt(0) == '*';
 
 				if (worn) {
-					armourType = data[4].substring(1);
+					armourType = data[5].substring(1);
 				} else {
-					armourType = data[4];
+					armourType = data[5];
 				}
 
 				return new Armour(id, tagged, shortdesc, wornOut, type, worn,
-						armourType);
+						armourType, image);
 			case 'C' :
-				return new Container(id, tagged, shortdesc, wornOut, type);
+				return new Container(id, tagged, shortdesc, wornOut, type,
+						image);
 			default :
-				return new Item(id, tagged, shortdesc, wornOut, type);
-
+				return new Item(id, tagged, shortdesc, wornOut, type, image);
 		}
 
 	}
@@ -466,6 +468,11 @@ public class Inventory extends JFrame
 		/* Read until ESC+END */
 		while (read.indexOf(ESC + "END") == -1) {
 			int available = vikingIn.available();
+
+			if (available == 0) {
+				available = 1;
+			}
+
 			byte[] bytes = new byte[available];
 			int bc = vikingIn.read(bytes);
 

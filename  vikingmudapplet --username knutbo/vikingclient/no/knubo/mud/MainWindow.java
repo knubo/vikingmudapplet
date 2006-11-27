@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
 import javax.swing.ScrollPaneConstants;
- 
+
 /**
  * Main code for the applet window. Sets up window stuff.
  */
@@ -74,8 +74,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * Setup stuff.
 	 */
 	public void init() {
-		
-		
+
 		UIStuff.setupUI();
 
 		history = new History();
@@ -219,7 +218,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
 					history, this.aliasFrame, this.aliasRecordFrame,
-					this.inventoryFrame,this.textInput);
+					this.inventoryFrame, this.textInput);
 
 			this.textInput.addKeyListener(communicationThread);
 		}
@@ -408,18 +407,27 @@ public class MainWindow extends JApplet implements MenuTopics {
 		}
 	}
 
+	boolean loginCheck() {
+		if (communicationThread == null
+				|| !communicationThread.isLoginComplete()) {
+			textPane.appendPlain("You need to connect first.\n", Color.YELLOW);
+			return false;
+		}
+		return true;
+	}
+
 	private JMenu createCommandMenu() {
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
 
-				if (communicationThread == null) {
-					textPane.appendPlain("You need to connect first.\n",
-							Color.YELLOW);
+				if (!loginCheck()) {
 					return;
 				}
+
 				communicationThread.doAction("!" + item.getText());
 			}
+
 		};
 
 		JMenu menu = new JMenu("Commands");
@@ -445,9 +453,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 			public void actionPerformed(ActionEvent e) {
 				JMenuItem item = (JMenuItem) e.getSource();
 
-				if (communicationThread == null) {
-					textPane.appendPlain("You need to connect first.\n",
-							Color.YELLOW);
+				if (!loginCheck()) {
 					return;
 				}
 				if (item.getText().equals(TURN_ON_COLOUR_SUPPORT)) {
@@ -503,7 +509,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 					}
 				} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
 					textPane.setText("");
-				} else if(item.getText().equals(GAME_INVENTORY)) {
+				} else if (item.getText().equals(GAME_INVENTORY)) {
 					inventoryFrame.setVisible(true);
 				}
 			}
@@ -548,33 +554,26 @@ public class MainWindow extends JApplet implements MenuTopics {
 					UIStuff.setupUI();
 					textPane.appendPlain(About.aboutInfo(), Color.YELLOW);
 				} else if (item.getText().equals(HELP_GETTING_STARTED)) {
-					if (communicationThread != null) {
-						communicationThread.doAction("!help");
-					} else {
-						textPane.appendPlain("You need to connect first.\n",
-								Color.YELLOW);
+					if (!loginCheck()) {
+						return;
 					}
+					communicationThread.doAction("!help");
 				} else if (item.getText().equals(HELP_TOPICS)) {
-					if (communicationThread != null) {
-						communicationThread.doAction("!help mortal");
-					} else {
-						textPane.appendPlain("You need to connect first.\n",
-								Color.YELLOW);
+					if (!loginCheck()) {
+						return;
 					}
+					communicationThread.doAction("!help mortal");
 				} else if (item.getText().equals(HELP_CLIENT)) {
 					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
 				} else if (item.getText().equals(HELP_CHANGES)) {
 					textPane.appendPlain(About.changes(), Color.YELLOW);
 				} else {
+					if (!loginCheck()) {
+						return;
+					}
 
 					String topic = (String) helpMap.get(item.getText());
-
-					if (communicationThread != null) {
-						communicationThread.doAction("!" + topic);
-					} else {
-						textPane.appendPlain("You need to connect first.\n",
-								Color.YELLOW);
-					}
+					communicationThread.doAction("!" + topic);
 				}
 			}
 		};

@@ -501,11 +501,11 @@ public class MainWindow extends JApplet implements MenuTopics {
 						communicationThread.loginGuest();
 					}
 				} else if (item.getText().equals(GAME_JUST_LOGIN)) {
-					history.init_discard_count();
 					login();
 				} else if (item.getText().equals(GAME_LOGG_OFF)) {
 					if (communicationThread != null) {
 						communicationThread.doAction("!quit");
+						communicationThread.quit();
 					}
 				} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
 					textPane.setText("");

@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.35";
+	final static String LATEST = "0.36";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -68,8 +68,9 @@ class About {
 				+ "0.29 Added images to inventory treeview.\n"
 				+ "0.30 Set fonts for inventory window.\n"
 				+ "0.32 Some inventory enhancements.\n"
-				+ "0.33 Made some tagged graphics.\n" 
-				+ "0.34 Added color for wear out in inventory.\n"+ LATEST+
-				" Converted to fetch inventory images from the mud. Small fix in connect issues.\n";
+				+ "0.33 Made some tagged graphics.\n"
+				+ "0.34 Added color for wear out in inventory.\n"
+				+ "0.35 Converted to fetch inventory images from the mud. Small fix in connect issues.\n"
+				+ LATEST + " Fixed space hack upon login and added <secret> tag for password inputs.\n";
 	}
 }

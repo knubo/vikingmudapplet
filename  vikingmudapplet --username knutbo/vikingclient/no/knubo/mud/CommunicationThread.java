@@ -20,12 +20,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	/** The place for pre actions. Not good for sending after startup. */
 	private List startupLists;
 	private Socket vikingSocket;
-
 	private PrintStream vikingOut;
 	private InputStream vikingIn;
-
-	private final ColorPane textPane;
-
 	/**
 	 * Stuff that was left when text was parsed. Is kept to the next time text
 	 * comes from the mud.
@@ -41,17 +37,19 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean currentUnderline;
 	private boolean currentRevVid;
 
+	private final ColorPane textPane;
 	private final History history;
 	private final Alias aliases;
 	private final Aliasrecorder aliasRecorder;
+	private final JTextArea textInput;
 
 	private long lastPoll;
 	private final long timeBetweenPoll = 10 * 1000;
 	private final Inventory inventory;
 
+	/** Try to track if login is complete. */
 	private boolean loginComplete = false;
-	private final JTextArea textInput;
-
+	private boolean passwordInput = false;
 	CommunicationThread(ColorPane textPane, History history, Alias aliases,
 			Aliasrecorder aliasRecorder, Inventory inventory,
 			JTextArea textInput) {
@@ -124,7 +122,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		try {
 			while ((fromServer = readSome()) != null) {
-				visTekst(fromServer);
+				showText(fromServer);
 			}
 		} catch (IOException e) {
 			textPane.setText(e.getMessage());
@@ -134,7 +132,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		System.out.println("Socket loop ended");
 	}
 
-	private void visTekst(String fromServerInput) {
+	private void showText(String fromServerInput) {
 		String fromServer = fromServerInput;
 
 		if (leftovers != null) {
@@ -169,7 +167,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			currentBold = false;
 			currentUnderline = false;
 			currentRevVid = false;
-			visTekst(fromServer.substring(mpos + 1));
+			showText(fromServer.substring(mpos + 1));
 			return;
 		}
 
@@ -204,7 +202,7 @@ class CommunicationThread implements Runnable, KeyListener {
 					+ "> " + color + " " + fromServer);
 		}
 
-		visTekst(fromServer.substring(mpos + 1));
+		showText(fromServer.substring(mpos + 1));
 		return;
 
 	}
@@ -286,22 +284,32 @@ class CommunicationThread implements Runnable, KeyListener {
 		if (read == -1) {
 			return null;
 		}
+		boolean replace = false;
+		
+		for (int i = 0; i < read; i++) {
+			byte b = bytes[i];
 
-		if (!loginComplete) {
-			for (int i = 0; i < read; i++) {
-				byte b = bytes[i];
+			if (b < 27 && b != 10 && b != 9 && b != 13) {
 
-				if (b < 31 && b != 10 && b != 9 && b != 13) {
+				read--;
 
-					if (b == -4) {
-						loginComplete = true;
-						System.out.println("Login complete");
-					}
-					bytes[i] = 32;
+				/* -1 -5 1 */
+				if (b == -5) {
+					loginComplete = false;
+					passwordInput = true;
+					System.out.println("Password input");
+				} else if (b == -4) {
+					loginComplete = true;
+					passwordInput = false;
+					System.out.println("Login complete");
 				}
+				bytes[i] = 7;
+				replace = true;
 			}
 		}
-
+		if(replace) {
+			return new String(bytes,0,read).replaceAll(String.valueOf(((char)7)), "");
+		}
 		return new String(bytes, 0, read);
 	}
 
@@ -381,9 +389,13 @@ class CommunicationThread implements Runnable, KeyListener {
 					return;
 				}
 
-				history.addHistroy(raw);
-				aliasRecorder.addCommand(raw);
-				textPane.appendPlain(toSend, Color.white);
+				if (!passwordInput) {
+					history.addHistroy(raw);
+					aliasRecorder.addCommand(raw);
+					textPane.appendPlain(toSend, Color.white);
+				} else {
+					textPane.appendPlain("<hidden>\n", Color.white);
+				}
 
 				/* alias replacement */
 				String alias = aliases.getAlias(raw);
@@ -471,6 +483,14 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public boolean isLoginComplete() {
 		return loginComplete;
+	}
+
+	public void quit() {
+		try {
+			vikingSocket.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

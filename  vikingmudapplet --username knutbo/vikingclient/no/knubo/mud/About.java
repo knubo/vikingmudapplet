@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.37";
+	final static String LATEST = "0.39";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -72,6 +72,9 @@ class About {
 				+ "0.34 Added color for wear out in inventory.\n"
 				+ "0.35 Converted to fetch inventory images from the mud. Small fix in connect issues.\n"
 				+ "0.36 Fixed space hack upon login and added <secret> tag for password inputs.\n"
-				+ LATEST + " Fixed scroll problem, added some font sizes.\n";
+				+ "0.37 Fixed scroll problem, added some font sizes.\n"
+
+				+ "0.38 Added alias support stored in your online profile.\n"
+				+ LATEST+ " Added single alias call to serverside.\n";
 	}
 }

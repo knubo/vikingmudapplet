@@ -4,6 +4,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.HashMap;
 
 import javax.swing.JButton;
@@ -18,7 +19,10 @@ class Aliases extends JFrame implements ActionListener, Alias {
 
 	private HashMap aliases;
 
-	Aliases() {
+	private final PersistantStore persistantStore;
+
+	Aliases(PersistantStore persistantStore) {
+		this.persistantStore = persistantStore;
 		textPane = new JTextPane();
 
 		JScrollPane scrollPane = new JScrollPane(textPane);
@@ -87,6 +91,7 @@ class Aliases extends JFrame implements ActionListener, Alias {
 		textPane.replaceSelection("\n" + id + "=" + value);
 
 		aliases.put(id, value);
+
 		return true;
 	}
 
@@ -113,7 +118,14 @@ class Aliases extends JFrame implements ActionListener, Alias {
 				return false;
 			}
 
-			aliases.put(line.substring(0, pos), line.substring(pos + 1));
+			String key = line.substring(0, pos);
+
+			if (key.equals("sessionID") || key.equals("aliasSYNC")) {
+				JOptionPane.showMessageDialog(this, "Alias name " + key
+						+ " is reserved and cannot be used.");
+				return false;
+			}
+			aliases.put(key, line.substring(pos + 1));
 		}
 
 		return true;
@@ -121,12 +133,29 @@ class Aliases extends JFrame implements ActionListener, Alias {
 
 	public boolean addAlias(String raw) {
 		int firstSpace = raw.indexOf(' ');
+		
+		if(firstSpace == -1) {
+			return false;
+		}
+		
 		int nextSpace = raw.indexOf(' ', firstSpace + 1);
 		String command = raw.substring(firstSpace, nextSpace).trim();
 		String value = raw.substring(nextSpace).trim();
 
 		if (command.length() == 0 || value.length() == 0) {
 			return false;
+		}
+		
+
+		if (persistantStore != null) {
+			HashMap one = new HashMap(1);
+			one.put(command, value);
+
+			try {
+				persistantStore.sendAliases(one, true);
+			} catch (IOException e) {
+				e.printStackTrace();// TODO Smarter.
+			}
 		}
 
 		addAlias(command, value, false);
@@ -136,5 +165,23 @@ class Aliases extends JFrame implements ActionListener, Alias {
 
 	public String toString() {
 		return "Aliases:\n" + aliases.toString() + "\n";
+	}
+
+	public void setVisible(boolean b) {
+		super.setVisible(b);
+
+		if (persistantStore == null) {
+			return;
+		}
+		try {
+			if (b) {
+				textPane.setText(persistantStore.getInventoryData());
+			} else {
+				System.out.println("Send said:"
+						+ persistantStore.sendAliases(aliases, false));
+			}
+		} catch (IOException e) {
+			e.printStackTrace();// TODO Smarter.
+		}
 	}
 }

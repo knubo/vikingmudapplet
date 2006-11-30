@@ -440,9 +440,9 @@ class CommunicationThread implements Runnable, KeyListener {
 			if (raw.equals("#alias")) {
 				textPane.appendPlain(aliases.toString(), Color.white);
 			} else if (aliases.addAlias(raw)) {
-				textPane.appendPlain("OK", Color.WHITE);
+				textPane.appendPlain("OK\n", Color.WHITE);
 			} else {
-				textPane.appendPlain("Alias sytax: #alias <alias> <whatever>.",
+				textPane.appendPlain("Alias sytax: #alias <alias> <whatever>.\n",
 						Color.RED);
 			}
 			return true;

@@ -70,6 +70,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	Inventory inventoryFrame;
 
+	private String sessionID;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -78,7 +80,10 @@ public class MainWindow extends JApplet implements MenuTopics {
 		UIStuff.setupUI();
 
 		history = new History();
-		aliasFrame = new Aliases();
+
+		sessionID = getParameter("sessionID");
+		aliasFrame = new Aliases(sessionID != null ? new PersistantStore(
+				sessionID) : null);
 		inventoryFrame = new Inventory();
 		aliasRecordFrame = new AliasrecorderImpl(aliasFrame);
 
@@ -94,8 +99,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 		JScrollPane scrollPane = new JScrollPane(textPane,
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-
-		// scrollPane.setAutoscrolls(true);
 
 		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
@@ -154,6 +157,12 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		setBounds(0, 0, textPane.getMinimumSize().width + 40, 540);
 		// put it all together and show it.
+
+		if (sessionID != null) {
+			textPane.appendPlain("Client in logged in mode.\n", Color.WHITE);
+		} else {
+			textPane.appendPlain("Client in non logged in mode.\n", Color.WHITE);
+		}
 		setVisible(true);
 	}
 	private void setupTextInput() {

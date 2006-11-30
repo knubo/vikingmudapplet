@@ -95,7 +95,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
-		scrollPane.setAutoscrolls(true);
+		// scrollPane.setAutoscrolls(true);
 
 		int width = textPane.getFontMetrics(textPane.getFont()).charWidth('X') * 90;
 		scrollPane.setMinimumSize(new Dimension(width, 200));
@@ -379,7 +379,8 @@ public class MainWindow extends JApplet implements MenuTopics {
 			}
 		};
 
-		String[] choices = {" 8pt", "10 pt", "12 pt", "14 pt", "16 pt", "18 pt"};
+		String[] choices = {" 8pt", " 9pt", "10 pt", "11 pt", "12 pt", "14 pt",
+				"16 pt", "18 pt"};
 
 		for (int i = 0; i < choices.length; i++) {
 			String size = choices[i];

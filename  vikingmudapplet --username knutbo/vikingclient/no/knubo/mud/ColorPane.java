@@ -23,8 +23,6 @@ class ColorPane extends JTextPane {
 		
 		Color bgcolor = null;
 
-		// s = s.replace((char)27, '\n');
-
 		if (revVid) {
 			bgcolor = c;
 
@@ -50,12 +48,16 @@ class ColorPane extends JTextPane {
 
 		aset = sc.addAttribute(aset, StyleConstants.Background, bgcolor);
 
-		int len = getDocument().getLength(); // same value as
-		// getText().length();
+		/* same value as getText().length(); */
+		int len = getDocument().getLength(); 
 		setCaretPosition(len); // place caret at the end (with no selection)
 		setCharacterAttributes(aset, false);
-		replaceSelection(s); // there is no selection, so inserts at caret
-		// setEditable(false);
+		replaceSelection(s); 
+		
+		/* Force cursor to end of document to make it scroll */
+		len = getDocument().getLength(); 
+		setCaretPosition(len);
+		// there is no selection, so inserts at caret
 	}
 
 	public static void main(String argv[]) {

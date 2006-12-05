@@ -40,7 +40,7 @@ public class PersistantStore {
 		printout.writeBytes("sessionID=" + sessionId);
 
 		if (merge) {
-			printout.writeBytes("&aliasSYNC=true");
+			printout.writeBytes("&aliasSYNC=1");
 		}
 		
 		for (Iterator i = aliases.entrySet().iterator(); i.hasNext();) {

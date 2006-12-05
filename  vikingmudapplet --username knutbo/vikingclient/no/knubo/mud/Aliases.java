@@ -91,6 +91,18 @@ class Aliases extends JFrame implements ActionListener, Alias {
 		textPane.replaceSelection("\n" + id + "=" + value);
 
 		aliases.put(id, value);
+		
+		if (persistantStore != null) {
+			HashMap one = new HashMap(1);
+			one.put(id, value);
+
+			try {
+				System.out.println("Single:"+persistantStore.sendAliases(one, true));
+			} catch (IOException e) {
+				e.printStackTrace();// TODO Smarter.
+			}
+		}
+
 
 		return true;
 	}
@@ -146,18 +158,6 @@ class Aliases extends JFrame implements ActionListener, Alias {
 			return false;
 		}
 		
-
-		if (persistantStore != null) {
-			HashMap one = new HashMap(1);
-			one.put(command, value);
-
-			try {
-				persistantStore.sendAliases(one, true);
-			} catch (IOException e) {
-				e.printStackTrace();// TODO Smarter.
-			}
-		}
-
 		addAlias(command, value, false);
 
 		return true;

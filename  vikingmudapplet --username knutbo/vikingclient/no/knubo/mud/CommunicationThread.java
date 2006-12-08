@@ -478,7 +478,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void loginGuest() {
 		startupLists.add("guest");
-
+		loginComplete = true;
 	}
 
 	public boolean isLoginComplete() {

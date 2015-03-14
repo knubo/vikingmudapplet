@@ -1,0 +1,1 @@
+This is a mud client like application to be hosted on http://community.vikingmud.org that will enable players to connect directly to the mud running at www.vikingmud.org 2001. The client will have various 'nice to have' features found in other more elaborate clients.

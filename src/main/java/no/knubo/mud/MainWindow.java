@@ -34,7 +34,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 	private static final String COURIER_NEW = "Courier New";
 
-	private static final int DEFALT_FONT_SIZE = 12;
+	private static final int DEFALT_FONT_SIZE = 14;
 
 	/**
 	 * The place where the text is drawn.
@@ -83,6 +83,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		scrollPane.setMinimumSize(new Dimension(width, 200));
 
 		GridBagLayout gbl = new GridBagLayout();
+
 		setLayout(gbl);
 
 		GridBagConstraints displayConstraints = new GridBagConstraints();
@@ -94,6 +95,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		displayConstraints.fill = GridBagConstraints.BOTH;
 		displayConstraints.weightx = 1;
 		displayConstraints.weighty = 1;
+
 		gbl.setConstraints(scrollPane, displayConstraints);
 		add(scrollPane);
 
@@ -114,7 +116,6 @@ public class MainWindow extends JFrame implements MenuTopics {
 		mb.add(createColorMenu());
 		mb.add(createHistoryMenu());
 		mb.add(createHelpMenu());
-
 
 		setJMenuBar(mb);
 

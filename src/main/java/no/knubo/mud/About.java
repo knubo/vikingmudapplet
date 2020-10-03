@@ -1,7 +1,7 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "0.39";
+	final static String LATEST = "1.0";
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -17,11 +17,14 @@ class About {
 				+ "Viking Mud Online Client "
 				+ LATEST
 				+ "\n"
-				+ "Created by knutbo@ifi.uio.no, alias Knubo.\n"
+				+ "Created by vikingmud@knubo.no, alias Knubo.\n"
 				+ "==========================================\n\n"
 				+ "To play the game, select the game menu in the "
-				+ "top and select 'Login as guest' or 'Just login'. "
-				+ "See menu Help -> Client for even more details.\n"
+				+ "top and select 'Login as guest' or 'Just login'. " +
+				" In the bottom there is a text line input where you write your commands." +
+				" If you have never created a character before, " +
+				"you may create a character. Just find an unused name while logging in."
+				+ "\n\nSee menu Help -> Client for even more details.\n"
 				+ "Be nice, have a good time, play one character at a time! (For more detailed rules, look at help rules).\n";
 	}
 

@@ -18,6 +18,7 @@ public interface MenuTopics {
 
 	String GAME_CLEAR_WINDOW = "Clear window";
 	String GAME_INVENTORY = "Stats window";
+	String GAME_CHAT = "Chat history";
 	String GAME_JUST_LOGIN = "Just login";
 	String GAME_LOGIN_AS_GUEST = "Login as guest";
 

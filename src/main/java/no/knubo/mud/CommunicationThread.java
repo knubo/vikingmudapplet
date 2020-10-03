@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
 
@@ -38,6 +39,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean currentRevVid;
 
 	private final ColorPane textPane;
+	private ColorPane chatPane;
 	private final History history;
 	private final JTextArea textInput;
 
@@ -48,10 +50,11 @@ class CommunicationThread implements Runnable, KeyListener {
 	/** Try to track if login is complete. */
 	private boolean loginComplete = false;
 	private boolean passwordInput = false;
-	CommunicationThread(ColorPane textPane, History history,
+	CommunicationThread(ColorPane textPane, ColorPane chatPane, History history,
 			Inventory inventory,
 			JTextArea textInput) {
 		this.textPane = textPane;
+		this.chatPane = chatPane;
 		this.history = history;
 		this.inventory = inventory;
 		this.textInput = textInput;
@@ -152,8 +155,8 @@ class CommunicationThread implements Runnable, KeyListener {
 		/* Add text before change */
 		if (posBrac != 0) {
 			/* There's an esc sign before the brachet */
-			textPane.append(currentColor, fromServer.substring(0, posBrac - 1),
-					currentBold, currentUnderline, currentRevVid);
+			String t = fromServer.substring(0, posBrac - 1);
+			addText(t);
 		}
 
 		posBrac++;
@@ -241,8 +244,13 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		return null;
 	}
+	final Pattern regex = Pattern.compile(".*\\[.*\\].*", Pattern.DOTALL);
 
 	private void addText(String text) {
+		if(regex.matcher(text).find() || text.contains("tells") || text.contains("shouts")) {
+			chatPane.append(currentColor, text+"\n", currentBold, currentUnderline,
+					currentRevVid);
+		}
 		textPane.append(currentColor, text, currentBold, currentUnderline,
 				currentRevVid);
 	}

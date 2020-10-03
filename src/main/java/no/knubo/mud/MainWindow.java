@@ -1,29 +1,12 @@
 package no.knubo.mud;
 
-import javafx.application.Application;
-import javafx.stage.Stage;
-
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.Map;
-
-import javax.swing.*;
+import java.util.*;
 
 /**
  * Main code for the applet window. Sets up window stuff.
@@ -54,10 +37,12 @@ public class MainWindow extends JFrame implements MenuTopics {
 	String chosenFont;
 
 	Inventory inventoryFrame;
+	ChatMessages chatFrame;
 
 	/**
 	 * Setup stuff.
 	 */
+	@SuppressWarnings("DuplicatedCode")
 	public void init() {
 
 		UIStuff.setupUI();
@@ -65,6 +50,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 		history = new History();
 
 		inventoryFrame = new Inventory();
+		chatFrame = new ChatMessages();
+		chatFrame.init(this);
 
 		textPane = new ColorPane();
 		textPane.setMargin(new Insets(5, 5, 5, 5));
@@ -157,6 +144,9 @@ public class MainWindow extends JFrame implements MenuTopics {
 		textInput.setFont(textPane.getFont());
 		textInput.setCaretColor(Color.WHITE);
 
+		textInput.setMargin(new Insets(5, 5, 5, 5));
+
+
 	}
 	String getFontName() {
 		try {
@@ -203,7 +193,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		}
 
 		if (communicationThread == null) {
-			communicationThread = new CommunicationThread(this.textPane,
+			communicationThread = new CommunicationThread(this.textPane, this.chatFrame.textPane,
 					history,
 					this.inventoryFrame, this.textInput);
 
@@ -475,6 +465,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 				textPane.setText("");
 			} else if (item.getText().equals(GAME_INVENTORY)) {
 				inventoryFrame.setVisible(true);
+			} else if (item.getText().equals(GAME_CHAT)) {
+				chatFrame.setVisible(true);
 			}
 		};
 
@@ -486,6 +478,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 		menu.add(new JSeparator());
 		menu.add(menuitem(GAME_INVENTORY, actionListener));
+		menu.add(menuitem(GAME_CHAT, actionListener));
 		menu.add(new JSeparator());
 
 		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));

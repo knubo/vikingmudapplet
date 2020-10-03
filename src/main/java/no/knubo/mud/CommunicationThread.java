@@ -39,8 +39,6 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private final ColorPane textPane;
 	private final History history;
-	private final Alias aliases;
-	private final Aliasrecorder aliasRecorder;
 	private final JTextArea textInput;
 
 	private long lastPoll;
@@ -50,13 +48,11 @@ class CommunicationThread implements Runnable, KeyListener {
 	/** Try to track if login is complete. */
 	private boolean loginComplete = false;
 	private boolean passwordInput = false;
-	CommunicationThread(ColorPane textPane, History history, Alias aliases,
-			Aliasrecorder aliasRecorder, Inventory inventory,
+	CommunicationThread(ColorPane textPane, History history,
+			Inventory inventory,
 			JTextArea textInput) {
 		this.textPane = textPane;
 		this.history = history;
-		this.aliases = aliases;
-		this.aliasRecorder = aliasRecorder;
 		this.inventory = inventory;
 		this.textInput = textInput;
 		currentColor = Color.WHITE;
@@ -391,17 +387,12 @@ class CommunicationThread implements Runnable, KeyListener {
 
 				if (!passwordInput) {
 					history.addHistroy(raw);
-					aliasRecorder.addCommand(raw);
 					textPane.appendPlain(toSend, Color.white);
 				} else {
 					textPane.appendPlain("<hidden>\n", Color.white);
 				}
 
 				/* alias replacement */
-				String alias = aliases.getAlias(raw);
-				if (alias != null) {
-					raw = alias;
-				}
 
 				String[] actions = null;
 				if (raw.startsWith("$")) {
@@ -428,23 +419,6 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean doClientAction(String raw) {
 		if (raw.equals("#history")) {
 			textPane.appendPlain(history.allHistory(), Color.WHITE);
-			return true;
-		}
-
-		if (raw.equals("#aliasedit")) {
-			aliases.setVisible(!aliases.isVisible());
-			return true;
-		}
-
-		if (raw.startsWith("#alias")) {
-			if (raw.equals("#alias")) {
-				textPane.appendPlain(aliases.toString(), Color.white);
-			} else if (aliases.addAlias(raw)) {
-				textPane.appendPlain("OK\n", Color.WHITE);
-			} else {
-				textPane.appendPlain("Alias sytax: #alias <alias> <whatever>.\n",
-						Color.RED);
-			}
 			return true;
 		}
 

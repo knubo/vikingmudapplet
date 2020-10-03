@@ -87,15 +87,15 @@ public class UIStuff {
 		UIManager.put("Table.foreground", Color.white);
 		UIManager.put("Viewport.background", bgPanel);
 
-		// UIManager.put("TableHeader.background", bgColor);
-		// UIManager.put("TableHeader.foreground", Color.white);
+		 UIManager.put("TableHeader.background", bgColor);
+		 UIManager.put("TableHeader.foreground", Color.white);
 
-		UIManager.put("MenuBar.background", bgColor);
-		UIManager.put("MenuBar.foreground", Color.white);
-		UIManager.put("Menu.background", bgColor);
-		UIManager.put("Menu.foreground", Color.white);
-		UIManager.put("MenuItem.background", bgColor);
-		UIManager.put("MenuItem.foreground", Color.white);
+		UIManager.put("JMenuBar.background", bgColor);
+		UIManager.put("JMenuBar.foreground", Color.white);
+		UIManager.put("JMenu.background", bgColor);
+		UIManager.put("JMenu.foreground", Color.white);
+		UIManager.put("JMenuItem.background", bgColor);
+		UIManager.put("JMenuItem.foreground", Color.white);
 		UIManager.put("CheckBoxMenuItem.background", bgColor);
 		UIManager.put("CheckBoxMenuItem.foreground", Color.white);
 

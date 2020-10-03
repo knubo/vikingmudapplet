@@ -1,5 +1,8 @@
 package no.knubo.mud;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -20,20 +23,12 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
 
-import javax.swing.JApplet;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSeparator;
-import javax.swing.JTextArea;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.*;
 
 /**
  * Main code for the applet window. Sets up window stuff.
  */
-public class MainWindow extends JApplet implements MenuTopics {
+public class MainWindow extends JFrame implements MenuTopics {
 
 	private static final String GAME_LOGG_OFF = "Logg off";
 
@@ -45,12 +40,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * The place where the text is drawn.
 	 */
 	protected ColorPane textPane;
-
-	/**
-	 * A lock for modifying the document, or for actions that depend on the
-	 * document not being modified.
-	 */
-	Object doclock = new Object();
 
 	JTextArea textInput;
 
@@ -64,13 +53,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 	String chosenFont;
 
-	Aliases aliasFrame;
-
-	AliasrecorderImpl aliasRecordFrame;
-
 	Inventory inventoryFrame;
-
-	private String sessionID;
 
 	/**
 	 * Setup stuff.
@@ -81,11 +64,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		history = new History();
 
-		sessionID = getParameter("sessionID");
-		aliasFrame = new Aliases(sessionID != null ? new PersistantStore(
-				sessionID) : null);
 		inventoryFrame = new Inventory();
-		aliasRecordFrame = new AliasrecorderImpl(aliasFrame);
 
 		textPane = new ColorPane();
 		textPane.setMargin(new Insets(5, 5, 5, 5));
@@ -128,13 +107,15 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		// Set up the menu bar.
 		JMenuBar mb = new JMenuBar();
+
 		mb.add(createGameMenu());
 		mb.add(createCommandMenu());
 		mb.add(createFontMenu());
 		mb.add(createColorMenu());
 		mb.add(createHistoryMenu());
-		mb.add(createAliasMenu());
 		mb.add(createHelpMenu());
+
+
 		setJMenuBar(mb);
 
 		textPane.addKeyListener(new KeyAdapter() {
@@ -155,16 +136,12 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		});
 
-		setBounds(0, 0, textPane.getMinimumSize().width + 40, 540);
+		setBounds(0, 0, 1024, 768);
 		// put it all together and show it.
 
-		if (sessionID != null) {
-			textPane.appendPlain("Client in logged in mode.\n", Color.WHITE);
-		} else {
-			textPane.appendPlain("Client in non logged in mode.\n", Color.WHITE);
-		}
 		setVisible(true);
 	}
+
 	private void setupTextInput() {
 		textInput = new JTextArea(80, 4);
 		textInput.setBackground(Color.BLACK);
@@ -185,7 +162,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 			if (chosenFont != null) {
 				return chosenFont;
 			}
-			String value = getParameter("FONT_NAME");
+			String value = null; //getParameter("FONT_NAME");
 
 			if (value != null) {
 				chosenFont = value;
@@ -202,7 +179,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 	}
 	int getFontSize() {
 		try {
-			String value = getParameter("FONT_SIZE");
+			String value = null; //getParameter("FONT_SIZE");
 
 			if (value == null) {
 				return DEFALT_FONT_SIZE;
@@ -226,7 +203,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 
 		if (communicationThread == null) {
 			communicationThread = new CommunicationThread(this.textPane,
-					history, this.aliasFrame, this.aliasRecordFrame,
+					history,
 					this.inventoryFrame, this.textInput);
 
 			this.textInput.addKeyListener(communicationThread);
@@ -235,29 +212,6 @@ public class MainWindow extends JApplet implements MenuTopics {
 		theThread.start();
 		this.textInput.requestFocus();
 		return true;
-	}
-
-	private JMenu createAliasMenu() {
-		JMenu menu = new JMenu("Aliases");
-		menu.setMnemonic('a');
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JMenuItem item = (JMenuItem) e.getSource();
-
-				final String choice = item.getText();
-
-				if (choice.equals("Edit aliases")) {
-					aliasFrame.setVisible(true);
-				} else if (choice.equals("Record alias")) {
-					aliasRecordFrame.setVisible(true);
-				}
-			}
-		};
-
-		menu.add(menuitem("Edit aliases", actionListener));
-		menu.add(menuitem("Record alias", actionListener));
-
-		return menu;
 	}
 
 	private JMenu createHistoryMenu() {
@@ -471,7 +425,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 				} else if (item.getText().equals(TURN_OFF_COLOUR_SUPPORT)) {
 					communicationThread.doAction("!screen term dumb");
 				} else if (item.getText().equals(SHOW_COLORS)) {
-					communicationThread.doAction("!colour");
+					communicationThread.doAction("!color");
 				} else if (item.getText().equals(SUGGEST_COLOURS)) {
 					String[] acts = {"colour youtell l_blue",
 							"colour tells l_red", "colour prompt l_yellow",
@@ -502,30 +456,29 @@ public class MainWindow extends JApplet implements MenuTopics {
 	 * @return the style menu.
 	 */
 	private JMenu createGameMenu() {
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JMenuItem item = (JMenuItem) e.getSource();
+		ActionListener actionListener = e -> {
+			JMenuItem item = (JMenuItem) e.getSource();
 
-				if (item.getText().equals(GAME_LOGIN_AS_GUEST)) {
-					if (login()) {
-						communicationThread.loginGuest();
-					}
-				} else if (item.getText().equals(GAME_JUST_LOGIN)) {
-					login();
-				} else if (item.getText().equals(GAME_LOGG_OFF)) {
-					if (communicationThread != null) {
-						communicationThread.doAction("!quit");
-						communicationThread.quit();
-					}
-				} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
-					textPane.setText("");
-				} else if (item.getText().equals(GAME_INVENTORY)) {
-					inventoryFrame.setVisible(true);
+			if (item.getText().equals(GAME_LOGIN_AS_GUEST)) {
+				if (login()) {
+					communicationThread.loginGuest();
 				}
+			} else if (item.getText().equals(GAME_JUST_LOGIN)) {
+				login();
+			} else if (item.getText().equals(GAME_LOGG_OFF)) {
+				if (communicationThread != null) {
+					communicationThread.doAction("!quit");
+					communicationThread.quit();
+				}
+			} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
+				textPane.setText("");
+			} else if (item.getText().equals(GAME_INVENTORY)) {
+				inventoryFrame.setVisible(true);
 			}
 		};
 
 		JMenu menu = new JMenu("Game");
+
 		menu.setMnemonic('g');
 		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
 		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
@@ -552,7 +505,7 @@ public class MainWindow extends JApplet implements MenuTopics {
 		JMenu menu = new JMenu("Help");
 		menu.setMnemonic('h');
 
-		final Map helpMap = getHelpMap();
+		final Map<String, String> helpMap = new HashMap<>(); //getHelpMap();
 
 		ActionListener actionListener = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -608,6 +561,9 @@ public class MainWindow extends JApplet implements MenuTopics {
 		return menu;
 	}
 
+
+
+	/*
 	private Map getHelpMap() {
 		int i = 1;
 
@@ -630,4 +586,5 @@ public class MainWindow extends JApplet implements MenuTopics {
 			i++;
 		}
 	}
+	 */
 }

@@ -63,6 +63,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		startupLists = new LinkedList();
 	}
 
+
 	class RevVid {
 		RevVid(Color x) {
 			color = x;
@@ -248,8 +249,10 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	private void addText(String text) {
 		if(regex.matcher(text).find() || text.contains("tells") || text.contains("shouts")) {
+			chatPane.setEditable(true);
 			chatPane.append(currentColor, text+"\n", currentBold, currentUnderline,
 					currentRevVid);
+			chatPane.setEditable(false);
 		}
 		textPane.append(currentColor, text, currentBold, currentUnderline,
 				currentRevVid);
@@ -462,6 +465,13 @@ class CommunicationThread implements Runnable, KeyListener {
 		startupLists.add("guest");
 		loginComplete = true;
 	}
+
+	public void loginUser(String[] userAndPassword) {
+		startupLists.add(userAndPassword[0]);
+		startupLists.add(userAndPassword[1]);
+		loginComplete = true;
+	}
+
 
 	public boolean isLoginComplete() {
 		return loginComplete;

@@ -6,6 +6,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -206,19 +207,21 @@ public class MainWindow extends JFrame implements MenuTopics {
 	}
 
 	private JMenu createHistoryMenu() {
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JMenuItem item = (JMenuItem) e.getSource();
+		ActionListener actionListener = e -> {
+			JMenuItem item = (JMenuItem) e.getSource();
 
-				final String choice = item.getText();
+			final String choice = item.getText();
 
-				if (choice.equals(HISTORY_NEXT_COMMAND)) {
+			switch (choice) {
+				case HISTORY_NEXT_COMMAND:
 					textInput.setText(history.next());
-				} else if (choice.equals(HISTORY_PREVIOUS_COMMAND)) {
+					break;
+				case HISTORY_PREVIOUS_COMMAND:
 					textInput.setText(history.previous());
-				} else if (choice.equals(HISTORY_SHOW_ALL)) {
+					break;
+				case HISTORY_SHOW_ALL:
 					textPane.appendPlain(history.allHistory(), Color.WHITE);
-				}
+					break;
 			}
 		};
 
@@ -245,8 +248,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 	void clearSelections(final JMenu menu) {
 		Component[] menuComponents = menu.getMenuComponents();
 
-		for (int i = 0; i < menuComponents.length; i++) {
-			JMenuItem component = (JMenuItem) menuComponents[i];
+		for (Component menuComponent : menuComponents) {
+			JMenuItem component = (JMenuItem) menuComponent;
 			component.setSelected(false);
 		}
 	}
@@ -268,17 +271,15 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 	}
 	private void setupFamilyMenu(final JMenu familymenu) {
-		ActionListener actionListener = new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				JMenuItem item = (JMenuItem) e.getSource();
+		ActionListener actionListener = e -> {
+			JMenuItem item = (JMenuItem) e.getSource();
 
-				clearSelections(familymenu);
+			clearSelections(familymenu);
 
-				item.setSelected(true);
-				chosenFont = item.getText();
-				textPane.setFont(new Font(getFontName(), Font.PLAIN, fontSize));
-				textInput.setFont(textPane.getFont());
-			}
+			item.setSelected(true);
+			chosenFont = item.getText();
+			textPane.setFont(new Font(getFontName(), Font.PLAIN, fontSize));
+			textInput.setFont(textPane.getFont());
 		};
 
 		Font[] allFonts = GraphicsEnvironment.getLocalGraphicsEnvironment()
@@ -476,6 +477,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
 		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
 
+		addDynamicLogins(menu, actionListener);
+
 		menu.add(new JSeparator());
 		menu.add(menuitem(GAME_INVENTORY, actionListener));
 		menu.add(menuitem(GAME_CHAT, actionListener));
@@ -489,6 +492,37 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 		return menu;
 	}
+
+	private void addDynamicLogins(JMenu menu, ActionListener actionListener) {
+		String home = System.getProperty("user.home");
+
+		File file = new File(home + "/.vikingmud");
+
+		if(!file.canRead()) {
+			return;
+		}
+
+		try (BufferedReader br = new BufferedReader(new FileReader(file))){
+			String line = br.readLine();
+			while(line != null) {
+				String[] userAndPassword = line.split("=");
+				menu.add(menuitem("Login "+userAndPassword[0], l -> {
+					if (login()) {
+						communicationThread.loginUser(userAndPassword);
+					}
+				}));
+
+				line = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+
 	private JMenuItem menuitem(String text, ActionListener actionListener) {
 		JMenuItem menuItem = new JMenuItem(text);
 		menuItem.addActionListener(actionListener);
@@ -507,30 +541,37 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 				textPane.appendPlain("\n", Color.white);
 
-				if (item.getText().equals(HELP_ABOUT)) {
-					UIStuff.setupUI();
-					textPane.appendPlain(About.aboutInfo(), Color.YELLOW);
-				} else if (item.getText().equals(HELP_GETTING_STARTED)) {
-					if (!loginCheck()) {
-						return;
-					}
-					communicationThread.doAction("!help");
-				} else if (item.getText().equals(HELP_TOPICS)) {
-					if (!loginCheck()) {
-						return;
-					}
-					communicationThread.doAction("!help mortal");
-				} else if (item.getText().equals(HELP_CLIENT)) {
-					textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
-				} else if (item.getText().equals(HELP_CHANGES)) {
-					textPane.appendPlain(About.changes(), Color.YELLOW);
-				} else {
-					if (!loginCheck()) {
-						return;
-					}
+				switch (item.getText()) {
+					case HELP_ABOUT:
+						UIStuff.setupUI();
+						textPane.appendPlain(About.aboutInfo(), Color.YELLOW);
+						break;
+					case HELP_GETTING_STARTED:
+						if (!loginCheck()) {
+							return;
+						}
+						communicationThread.doAction("!help");
+						break;
+					case HELP_TOPICS:
+						if (!loginCheck()) {
+							return;
+						}
+						communicationThread.doAction("!help mortal");
+						break;
+					case HELP_CLIENT:
+						textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
+						break;
+					case HELP_CHANGES:
+						textPane.appendPlain(About.changes(), Color.YELLOW);
+						break;
+					default:
+						if (!loginCheck()) {
+							return;
+						}
 
-					String topic = (String) helpMap.get(item.getText());
-					communicationThread.doAction("!" + topic);
+						String topic = helpMap.get(item.getText());
+						communicationThread.doAction("!" + topic);
+						break;
 				}
 			}
 		};
@@ -540,12 +581,10 @@ public class MainWindow extends JFrame implements MenuTopics {
 		menu.add(menuitem(HELP_TOPICS, actionListener));
 		menu.add(new JSeparator());
 
-		ArrayList topics = new ArrayList(helpMap.keySet());
+		ArrayList<String> topics = new ArrayList<>(helpMap.keySet());
 		Collections.sort(topics);
 
-		for (Iterator i = topics.iterator(); i.hasNext();) {
-			String topic = (String) i.next();
-
+		for (String topic : topics) {
 			menu.add(menuitem(topic, actionListener));
 		}
 

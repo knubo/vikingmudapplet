@@ -129,6 +129,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 		// put it all together and show it.
 
 		setVisible(true);
+
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 
 	private void setupTextInput() {

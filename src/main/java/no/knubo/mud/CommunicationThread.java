@@ -50,6 +50,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	/** Try to track if login is complete. */
 	private boolean loginComplete = false;
 	private boolean passwordInput = false;
+	private long lastAction;
+
 	CommunicationThread(ColorPane textPane, ColorPane chatPane, History history,
 			Inventory inventory,
 			JTextArea textInput) {
@@ -248,7 +250,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	final Pattern regex = Pattern.compile(".*\\[.*\\].*", Pattern.DOTALL);
 
 	private void addText(String text) {
-		if(regex.matcher(text).find() || text.contains("tells") || text.contains("shouts")) {
+		if(regex.matcher(text).find() || text.contains("tells") || text.contains("You tell") || text.contains("shouts")) {
 			chatPane.setEditable(true);
 			chatPane.append(currentColor, text+"\n", currentBold, currentUnderline,
 					currentRevVid);
@@ -276,7 +278,9 @@ class CommunicationThread implements Runnable, KeyListener {
 			try {
 				if (loginComplete
 						&& lastPoll + timeBetweenPoll < System
-								.currentTimeMillis()) {
+								.currentTimeMillis() &&
+					lastAction + 60000 > System.currentTimeMillis()
+				) {
 					lastPoll = System.currentTimeMillis();
 					return inventory.readInventory(vikingIn, vikingOut);
 				}
@@ -420,6 +424,8 @@ class CommunicationThread implements Runnable, KeyListener {
 					for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
 						vikingOut.print(reps[0] + "\n");
 						textfield.setText("");
+						lastAction = System.currentTimeMillis();
+
 					}
 				}
 

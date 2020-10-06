@@ -65,7 +65,7 @@ public class ImageFactory {
 		}
 
 		try {
-			imageURL = new java.net.URL("http://www.vikingmud.org/knubo/"
+			imageURL = new java.net.URL("http://www.knubo.no/vikingmud/"
 					+ imageFileName);
 		} catch (MalformedURLException e) {
 			e.printStackTrace();

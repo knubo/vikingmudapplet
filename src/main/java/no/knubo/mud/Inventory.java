@@ -439,7 +439,9 @@ public class Inventory extends JFrame
 		switch (type) {
 			case 'W' :
 				if (data.length >= 6) {
-					wield = data[5].charAt(0);
+					if(data[5].length() > 0) {
+						wield = data[5].charAt(0);
+					}
 				}
 				return new Weapon(id, tagged, shortdesc, wornOut, type, wield,
 						image);

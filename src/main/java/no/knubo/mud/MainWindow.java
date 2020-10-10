@@ -2,10 +2,7 @@ package no.knubo.mud;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 
@@ -37,9 +34,12 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 	String chosenFont;
 
+	HashMap<String,String> aliases = new HashMap<>();
+
 	Inventory inventoryFrame;
 	ChatMessages chatFrame;
 
+	SettingsFrame settingsFrame;
 	/**
 	 * Setup stuff.
 	 */
@@ -95,17 +95,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		gbl.setConstraints(textInput, displayConstraints);
 		add(textInput);
 
-		// Set up the menu bar.
-		JMenuBar mb = new JMenuBar();
-
-		mb.add(createGameMenu());
-		mb.add(createCommandMenu());
-		mb.add(createFontMenu());
-		mb.add(createColorMenu());
-		mb.add(createHistoryMenu());
-		mb.add(createHelpMenu());
-
-		setJMenuBar(mb);
+		makeMenu();
 
 		textPane.addKeyListener(new KeyAdapter() {
 
@@ -147,6 +137,65 @@ public class MainWindow extends JFrame implements MenuTopics {
 			System.out.println("There was a security exception for: 'taskbar.setIconImage'");
 		}
 
+	}
+
+	public void makeMenu() {
+		JMenuBar mb = new JMenuBar();
+		// Set up the menu bar.
+
+		mb.add(createGameMenu());
+		mb.add(createCommandMenu());
+		mb.add(createAliasMenu());
+		mb.add(createFontMenu());
+		mb.add(createColorMenu());
+		mb.add(createHistoryMenu());
+		mb.add(createHelpMenu());
+
+
+		setJMenuBar(mb);
+		pack();
+		setBounds(0, 0, 1024, 768);
+
+	}
+
+	private JMenu createAliasMenu() {
+		JMenu menu = new JMenu("Aliases");
+		String home = System.getProperty("user.home");
+
+		File file = new File(home + "/.vikingmud");
+
+		if(!file.canRead()) {
+			return menu;
+		}
+
+		try (BufferedReader br = new BufferedReader(new FileReader(file))){
+			String line = br.readLine();
+			while(line != null) {
+				if(line.startsWith("A:")) {
+					String[] aliasAndAction = line.substring(2).split("=");
+					aliases.put(aliasAndAction[0], aliasAndAction[1]);
+
+					menu.add(menuitem(aliasAndAction[0], l -> {
+						if (communicationThread != null) {
+							String[] cmds = aliasAndAction[1].split(",");
+							for (String cmd : cmds) {
+								communicationThread.doActionNoEcho(cmd);
+							}
+						}
+					}));
+				}
+				line = br.readLine();
+			}
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+
+
+		return menu;
 	}
 
 
@@ -213,7 +262,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		}
 
 		if (communicationThread == null) {
-			communicationThread = new CommunicationThread(this.textPane, this.chatFrame.textPane,
+			communicationThread = new CommunicationThread(this.aliases, this.textPane, this.chatFrame.textPane,
 					history,
 					this.inventoryFrame, this.textInput);
 
@@ -483,6 +532,12 @@ public class MainWindow extends JFrame implements MenuTopics {
 				}
 			} else if (item.getText().equals(GAME_CLEAR_WINDOW)) {
 				textPane.setText("");
+			} else if (item.getText().equals(GAME_SETTINGS_WINDOW)) {
+				if(settingsFrame != null) {
+					settingsFrame.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+				}
+				settingsFrame = new SettingsFrame(this);
+				settingsFrame.setVisible(true);
 			} else if (item.getText().equals(GAME_INVENTORY)) {
 				inventoryFrame.setVisible(true);
 			} else if (item.getText().equals(GAME_CHAT)) {
@@ -496,7 +551,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		menu.add(menuitem(GAME_LOGIN_AS_GUEST, actionListener));
 		menu.add(menuitem(GAME_JUST_LOGIN, actionListener));
 
-		addDynamicLogins(menu, actionListener);
+		addDynamicLogins(menu);
 
 		menu.add(new JSeparator());
 		menu.add(menuitem(GAME_INVENTORY, actionListener));
@@ -504,6 +559,8 @@ public class MainWindow extends JFrame implements MenuTopics {
 		menu.add(new JSeparator());
 
 		menu.add(menuitem(GAME_CLEAR_WINDOW, actionListener));
+		menu.add(new JSeparator());
+		menu.add(menuitem(GAME_SETTINGS_WINDOW, actionListener));
 
 		menu.add(new JSeparator());
 
@@ -512,7 +569,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		return menu;
 	}
 
-	private void addDynamicLogins(JMenu menu, ActionListener actionListener) {
+	private void addDynamicLogins(JMenu menu) {
 		String home = System.getProperty("user.home");
 
 		File file = new File(home + "/.vikingmud");
@@ -524,13 +581,14 @@ public class MainWindow extends JFrame implements MenuTopics {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))){
 			String line = br.readLine();
 			while(line != null) {
-				String[] userAndPassword = line.split("=");
-				menu.add(menuitem("Login "+userAndPassword[0], l -> {
-					if (login()) {
-						communicationThread.loginUser(userAndPassword);
-					}
-				}));
-
+				if(line.startsWith("C:")) {
+					String[] userAndPassword = line.substring(2).split("=");
+					menu.add(menuitem("Login " + userAndPassword[0], l -> {
+						if (login()) {
+							communicationThread.loginUser(userAndPassword);
+						}
+					}));
+				}
 				line = br.readLine();
 			}
 

@@ -17,6 +17,7 @@ public interface MenuTopics {
 	String SHOW_COLORS = "Show colors";
 
 	String GAME_CLEAR_WINDOW = "Clear window";
+	String GAME_SETTINGS_WINDOW = "Settings";
 	String GAME_INVENTORY = "Stats window";
 	String GAME_CHAT = "Chat history";
 	String GAME_JUST_LOGIN = "Regular login";

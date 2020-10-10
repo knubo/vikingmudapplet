@@ -38,6 +38,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean currentUnderline;
 	private boolean currentRevVid;
 
+	private HashMap<String, String> aliases;
 	private final ColorPane textPane;
 	private ColorPane chatPane;
 	private final History history;
@@ -52,9 +53,10 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean passwordInput = false;
 	private long lastAction;
 
-	CommunicationThread(ColorPane textPane, ColorPane chatPane, History history,
-			Inventory inventory,
-			JTextArea textInput) {
+	CommunicationThread(HashMap<String, String> aliases, ColorPane textPane, ColorPane chatPane, History history,
+						Inventory inventory,
+						JTextArea textInput) {
+		this.aliases = aliases;
 		this.textPane = textPane;
 		this.chatPane = chatPane;
 		this.history = history;
@@ -64,7 +66,6 @@ class CommunicationThread implements Runnable, KeyListener {
 		setupColorCodes();
 		startupLists = new LinkedList();
 	}
-
 
 	class RevVid {
 		RevVid(Color x) {
@@ -247,12 +248,14 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		return null;
 	}
-	final Pattern regex = Pattern.compile(".*\\[.*\\].*", Pattern.DOTALL);
+
+	final Pattern regex = Pattern.compile(".*\\[.*\\]:.*", Pattern.DOTALL);
 
 	private void addText(String text) {
-		if(regex.matcher(text).find() || text.contains("tells") || text.contains("You tell") || text.contains("shouts")) {
+
+		if (regex.matcher(text).find() || text.contains("tells") || text.contains("You tell") || text.contains("shouts")) {
 			chatPane.setEditable(true);
-			chatPane.append(currentColor, text+"\n", currentBold, currentUnderline,
+			chatPane.append(currentColor, text + "\n", currentBold, currentUnderline,
 					currentRevVid);
 			chatPane.setEditable(false);
 		}
@@ -394,7 +397,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		String toSend = raw + "\n";
 
 		switch (arg0.getKeyChar()) {
-			case '\n' :
+			case '\n':
 				if (doClientAction(raw)) {
 					textfield.setText("");
 					return;
@@ -412,6 +415,14 @@ class CommunicationThread implements Runnable, KeyListener {
 				String[] actions = null;
 				if (raw.startsWith("$")) {
 					actions = raw.substring(1).split(";");
+				} else if(raw.startsWith("#")) {
+					String doit = aliases.get(raw.substring(1));
+					if(doit != null) {
+						actions = doit.split(",");
+					} else {
+						actions = new String[] {raw};
+					}
+
 				} else {
 					actions = new String[]{raw};
 				}
@@ -421,14 +432,13 @@ class CommunicationThread implements Runnable, KeyListener {
 
 					String[] reps = calcReps(action);
 
-					for (int i = Integer.parseInt(reps[1]); i-- > 0;) {
+					for (int i = Integer.parseInt(reps[1]); i-- > 0; ) {
 						vikingOut.print(reps[0] + "\n");
 						textfield.setText("");
 						lastAction = System.currentTimeMillis();
 
 					}
 				}
-
 				return;
 		}
 
@@ -464,6 +474,10 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void doAction(String action) {
 		textPane.appendPlain(action + "\n", Color.white);
+		vikingOut.println(action);
+	}
+
+	public void doActionNoEcho(String action) {
 		vikingOut.println(action);
 	}
 

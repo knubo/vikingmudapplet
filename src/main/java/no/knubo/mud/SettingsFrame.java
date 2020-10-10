@@ -12,6 +12,7 @@ public class SettingsFrame extends JFrame {
 
     DefaultTableModel charsAndPassword = new DefaultTableModel(0, 2);
     DefaultTableModel aliases = new DefaultTableModel(0, 2);
+    DefaultTableModel triggers = new DefaultTableModel(0, 2);
 
     int gridY = 0;
 
@@ -26,13 +27,15 @@ public class SettingsFrame extends JFrame {
         try (BufferedReader br = new BufferedReader(new FileReader(file))) {
             String line = br.readLine();
             while (line != null) {
+                int part = line.indexOf("=");
+                String[] data = new String[]{line.substring(2, part), line.substring(part + 1)};
+
                 if (line.startsWith("C:")) {
-                    String[] data = line.substring(2).split("=");
                     charsAndPassword.insertRow(charsAndPassword.getRowCount(), data);
-                }
-                if(line.startsWith("A:")) {
-                    String[] data = line.substring(2).split("=");
+                } else if (line.startsWith("A:")) {
                     aliases.insertRow(aliases.getRowCount(), data);
+                } else if (line.startsWith("T:")) {
+                    triggers.insertRow(triggers.getRowCount(), data);
                 }
                 line = br.readLine();
             }
@@ -61,6 +64,7 @@ public class SettingsFrame extends JFrame {
 
         createCharTable(gbl, displayConstraints);
         createAliasTable(gbl, displayConstraints);
+        createTriggersTable(gbl, displayConstraints);
 
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(c -> {
@@ -116,6 +120,43 @@ public class SettingsFrame extends JFrame {
     }
 
     @SuppressWarnings("DuplicatedCode")
+    private void createTriggersTable(GridBagLayout gbl, GridBagConstraints displayConstraints) {
+        DefaultTableColumnModel columns = new DefaultTableColumnModel();
+        TableColumn column = new TableColumn(0);
+        column.setHeaderValue("Trigger");
+        columns.addColumn(column);
+        TableColumn column1 = new TableColumn(1);
+        column1.setHeaderValue("Value");
+        columns.addColumn(column1);
+
+        JTable charsTable = new JTable(triggers, columns);
+
+        JScrollPane pane = new JScrollPane(charsTable);
+
+        displayConstraints.fill = GridBagConstraints.BOTH;
+        displayConstraints.gridy = gridY++;
+        displayConstraints.weightx = 1;
+        displayConstraints.weighty = 1;
+
+        gbl.setConstraints(pane, displayConstraints);
+
+        this.add(pane);
+
+        displayConstraints.weightx = 0;
+        displayConstraints.weighty = 0;
+        displayConstraints.fill = GridBagConstraints.NONE;
+
+        JButton addButton = new JButton("New trigger");
+        addButton.addActionListener(c -> {
+            triggers.insertRow(triggers.getRowCount(), new String[]{"", ""});
+        });
+        displayConstraints.gridy = gridY++;
+        gbl.setConstraints(addButton, displayConstraints);
+
+        this.add(addButton);
+    }
+
+    @SuppressWarnings("DuplicatedCode")
     private void createCharTable(GridBagLayout gbl, GridBagConstraints displayConstraints) {
         DefaultTableColumnModel columns = new DefaultTableColumnModel();
         TableColumn column = new TableColumn(0);
@@ -153,6 +194,7 @@ public class SettingsFrame extends JFrame {
         try (FileWriter writer = new FileWriter(file)) {
             storeSettings(writer, this.charsAndPassword, "C:");
             storeSettings(writer, this.aliases, "A:");
+            storeSettings(writer, this.triggers, "T:");
 
 
         } catch (IOException e) {

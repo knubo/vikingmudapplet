@@ -8,10 +8,8 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JTextArea;
@@ -29,16 +27,22 @@ class CommunicationThread implements Runnable, KeyListener {
 	 */
 	private String leftovers;
 
-	/** Keeps color codes and formatting for ansi text. */
+	/**
+	 * Keeps color codes and formatting for ansi text.
+	 */
 	private HashMap formatCodes;
 
 	private Color currentColor;
-	/** Keeps track of bold for text to be written. */
+	/**
+	 * Keeps track of bold for text to be written.
+	 */
 	private boolean currentBold;
 	private boolean currentUnderline;
 	private boolean currentRevVid;
 
 	private HashMap<String, String> aliases;
+	private HashMap<String, String> triggers;
+	private HashMap<String, Pattern> triggerPatterns = new HashMap<>();
 	private final ColorPane textPane;
 	private ColorPane chatPane;
 	private final History history;
@@ -48,15 +52,18 @@ class CommunicationThread implements Runnable, KeyListener {
 	private final long timeBetweenPoll = 10 * 1000;
 	private final Inventory inventory;
 
-	/** Try to track if login is complete. */
+	/**
+	 * Try to track if login is complete.
+	 */
 	private boolean loginComplete = false;
 	private boolean passwordInput = false;
 	private long lastAction;
 
-	CommunicationThread(HashMap<String, String> aliases, ColorPane textPane, ColorPane chatPane, History history,
-						Inventory inventory,
-						JTextArea textInput) {
+	CommunicationThread(HashMap<String, String> aliases, HashMap<String, String> triggers,
+						ColorPane textPane, ColorPane chatPane, History history,
+						Inventory inventory, JTextArea textInput) {
 		this.aliases = aliases;
+		this.triggers = triggers;
 		this.textPane = textPane;
 		this.chatPane = chatPane;
 		this.history = history;
@@ -133,6 +140,32 @@ class CommunicationThread implements Runnable, KeyListener {
 		loginComplete = false;
 		textPane.appendPlain("Connection to mud closed.\n", Color.WHITE);
 		System.out.println("Socket loop ended");
+	}
+
+	private void doTriggers(String fromServer) {
+		Set<Map.Entry<String, String>> ents = triggers.entrySet();
+
+		for (Map.Entry<String, String> ent : ents) {
+			String pattern = ent.getKey();
+
+			Pattern p = triggerPatterns.get(pattern);
+			if (p == null) {
+				p = Pattern.compile(pattern, Pattern.DOTALL);
+				triggerPatterns.put(pattern, p);
+			}
+			Matcher match = p.matcher(fromServer);
+
+			if (match.lookingAt()) {
+				String cmd = ent.getValue();
+				int c = match.groupCount();
+
+				for (int i = 1; i <= c; i++) {
+					cmd = cmd.replace("$" + i, match.group(i));
+				}
+				doAction(cmd);
+			}
+		}
+
 	}
 
 	private void showText(String fromServerInput) {
@@ -259,6 +292,7 @@ class CommunicationThread implements Runnable, KeyListener {
 					currentRevVid);
 			chatPane.setEditable(false);
 		}
+		doTriggers(text);
 		textPane.append(currentColor, text, currentBold, currentUnderline,
 				currentRevVid);
 	}

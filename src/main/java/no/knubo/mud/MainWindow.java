@@ -34,12 +34,14 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 	String chosenFont;
 
-	HashMap<String,String> aliases = new HashMap<>();
+	HashMap<String, String> aliases = new HashMap<>();
+	HashMap<String, String> triggers = new HashMap<>();
 
 	Inventory inventoryFrame;
 	ChatMessages chatFrame;
 
 	SettingsFrame settingsFrame;
+
 	/**
 	 * Setup stuff.
 	 */
@@ -171,13 +173,19 @@ public class MainWindow extends JFrame implements MenuTopics {
 		try (BufferedReader br = new BufferedReader(new FileReader(file))){
 			String line = br.readLine();
 			while(line != null) {
-				if(line.startsWith("A:")) {
-					String[] aliasAndAction = line.substring(2).split("=");
-					aliases.put(aliasAndAction[0], aliasAndAction[1]);
+				if (line.startsWith("T:")) {
+					int part = line.indexOf("=");
+					triggers.put(line.substring(2, part), line.substring(part + 1));
+				}
+				if (line.startsWith("A:")) {
+					int part = line.indexOf("=");
+					String alias = line.substring(2, part);
+					String action = line.substring(part + 1);
+					aliases.put(alias, action);
 
-					menu.add(menuitem(aliasAndAction[0], l -> {
+					menu.add(menuitem(alias, l -> {
 						if (communicationThread != null) {
-							String[] cmds = aliasAndAction[1].split(",");
+							String[] cmds = action.split(",");
 							for (String cmd : cmds) {
 								communicationThread.doActionNoEcho(cmd);
 							}
@@ -262,7 +270,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		}
 
 		if (communicationThread == null) {
-			communicationThread = new CommunicationThread(this.aliases, this.textPane, this.chatFrame.textPane,
+			communicationThread = new CommunicationThread(this.aliases, this.triggers, this.textPane, this.chatFrame.textPane,
 					history,
 					this.inventoryFrame, this.textInput);
 

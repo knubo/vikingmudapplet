@@ -10,7 +10,8 @@ class About {
 				+ "The input field support history accessible by the arrow keys. "
 				+ "Command history is also available by sending the command #history. "
 				+ "Repeats are supported by sending a "
-				+ "command like '#3 smile', which will make you smile 3 times.\n";
+				+ "command like '#3 smile', which will make you smile 3 times.\n\n"
+				+ "Also look at help menu about aliases.";
 
 	}
 	public static String greetingText() {

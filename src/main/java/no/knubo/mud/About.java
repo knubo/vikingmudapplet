@@ -1,7 +1,8 @@
 package no.knubo.mud;
 
 class About {
-	final static String LATEST = "1.0";
+	final static String LATEST = "1.1";
+
 	static String getClientHelp() {
 		return "\nTo connect choose login as guest or just login from the game menu. The game does only allow for "
 				+ "one guest user at at time so if there already is one present you can just log in and create "
@@ -39,7 +40,22 @@ class About {
 
 	public static String changes() {
 
-		return "\nChange history:\n"+
-				"1.0 Converted application to Java stand alone client.";
+		return "\nChange history:\n" +
+				"1.0 Converted application to Java stand alone client.\n" +
+				"1.1 Added aliases support in settings.";
+	}
+
+	public static String getAliasesHelp() {
+		return "\nAliases:\n" +
+				"Viking mud have aliases support where you can create shortcuts\n" +
+				"for commands. if you do alias gab get all from bag, you have\n" +
+				"created an alias. Sending 'gab' to the mud, it will expand this to \n" +
+				"get all from bag.\n\n" +
+				"If you want to do several commands in sequence, there is no such\n" +
+				"feature in the game. Though here the client\n" +
+				"will help. The aliases you you add in the settings menu can do\n" +
+				"several commands in sequence. If you add 'smile,smile,smile'\n" +
+				"when typing #smile it will send the command smile 3 times to\n" +
+				"the mud.";
 	}
 }

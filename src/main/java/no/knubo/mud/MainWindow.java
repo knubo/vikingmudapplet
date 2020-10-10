@@ -638,6 +638,10 @@ public class MainWindow extends JFrame implements MenuTopics {
 					case HELP_CLIENT:
 						textPane.appendPlain(About.getClientHelp(), Color.YELLOW);
 						break;
+					case HELP_ALIASES:
+						textPane.appendPlain(About.getAliasesHelp(), Color.YELLOW);
+						break;
+
 					case HELP_CHANGES:
 						textPane.appendPlain(About.changes(), Color.YELLOW);
 						break;
@@ -655,6 +659,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 
 		menu.add(menuitem(HELP_CLIENT, actionListener));
 		menu.add(menuitem(HELP_GETTING_STARTED, actionListener));
+		menu.add(menuitem(HELP_ALIASES, actionListener));
 		menu.add(menuitem(HELP_TOPICS, actionListener));
 		menu.add(new JSeparator());
 

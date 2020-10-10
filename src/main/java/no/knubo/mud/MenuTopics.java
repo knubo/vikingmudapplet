@@ -5,6 +5,7 @@ public interface MenuTopics {
 	String HELP_TOPICS = "Topics";
 	String HELP_ABOUT = "About";
 	String HELP_CLIENT = "Client";
+	String HELP_ALIASES = "Aliases";
 	String HELP_CHANGES = "Changes";
 
 	String HISTORY_SHOW_ALL = "Show history";

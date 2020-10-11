@@ -1,15 +1,12 @@
 package no.knubo.mud;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.ListIterator;
+import java.util.*;
 
 class History {
 	private static final int MAX_HISTORY = 100;
 
-	private LinkedList history = new LinkedList();
-	private ListIterator iterator;
+	private LinkedList<String> history = new LinkedList<>();
+	private ListIterator<String> iterator;
 
 	void addHistroy(String command) {
 		
@@ -40,6 +37,15 @@ class History {
 			return iterator.next().toString();
 		}
 		return "";
+	}
+
+	public String search(StringBuilder criteria) {
+		if(criteria.length() == 0) {
+			return null;
+		}
+		Optional<String> match = history.stream().filter(s -> s.contains(criteria)).findFirst();
+
+		return match.orElse(null);
 	}
 
 	public String allHistory() {

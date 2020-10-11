@@ -58,6 +58,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	private boolean loginComplete = false;
 	private boolean passwordInput = false;
 	private long lastAction;
+	private StringBuilder textFieldSearchMode;
+	private boolean startSearchMode;
 
 	CommunicationThread(HashMap<String, String> aliases, HashMap<String, String> triggers,
 						ColorPane textPane, ColorPane chatPane, History history,
@@ -292,7 +294,9 @@ class CommunicationThread implements Runnable, KeyListener {
 					currentRevVid);
 			chatPane.setEditable(false);
 		}
-		doTriggers(text);
+		if (lastAction + 60000 > System.currentTimeMillis()) {
+			doTriggers(text);
+		}
 		textPane.append(currentColor, text, currentBold, currentUnderline,
 				currentRevVid);
 	}
@@ -315,8 +319,8 @@ class CommunicationThread implements Runnable, KeyListener {
 			try {
 				if (loginComplete
 						&& lastPoll + timeBetweenPoll < System
-								.currentTimeMillis() &&
-					lastAction + 60000 > System.currentTimeMillis()
+						.currentTimeMillis() &&
+						lastAction + 60000 > System.currentTimeMillis()
 				) {
 					lastPoll = System.currentTimeMillis();
 					return inventory.readInventory(vikingIn, vikingOut);
@@ -333,7 +337,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			return null;
 		}
 		boolean replace = false;
-		
+
 		for (int i = 0; i < read; i++) {
 			byte b = bytes[i];
 
@@ -374,42 +378,64 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		JTextArea textfield = (JTextArea) arg0.getComponent();
 
-		switch (arg0.getKeyCode()) {
-			case KeyEvent.VK_UP :
-				textfield.setText(history.previous());
-				return;
-			case KeyEvent.VK_DOWN :
-				textfield.setText(history.next());
-				return;
+		int keyCode = arg0.getKeyCode();
+
+		if (arg0.getKeyCode() == KeyEvent.VK_R && arg0.isControlDown() &&
+				textFieldSearchMode == null) {
+			startSearchMode = true;
+			arg0.consume();
+			return;
+		}
+		if (keyCode == KeyEvent.VK_UP) {
+			textfield.setText(history.previous());
+			stopSearchMode();
+			return;
+		}
+		if (keyCode == KeyEvent.VK_DOWN) {
+			textfield.setText(history.next());
+			stopSearchMode();
+			return;
+		}
+		if (keyCode == KeyEvent.VK_LEFT || keyCode == KeyEvent.VK_RIGHT || keyCode == KeyEvent.VK_BACK_SPACE) {
+			stopSearchMode();
+			return;
+		}
+		if (arg0.isControlDown() || arg0.isMetaDown()) {
+			stopSearchMode();
+			return;
 		}
 	}
 
 	public void keyReleased(KeyEvent arg0) {
-		JTextArea textfield = (JTextArea) arg0.getComponent();
+		JTextArea textField = (JTextArea) arg0.getComponent();
 
 		/* ctrl -e */
 		if ((arg0.isControlDown() || arg0.isMetaDown())
 				&& arg0.getKeyCode() == KeyEvent.VK_E) {
-			textfield.setCaretPosition(textfield.getText().length());
+			textField.setCaretPosition(textField.getText().length());
+			stopSearchMode();
 			arg0.consume();
 			return;
 		}
 
 		/* ctrl -a */
-		if ((arg0.isControlDown() || arg0.isMetaDown())
+		if ((arg0.isControlDown())
 				&& arg0.getKeyCode() == KeyEvent.VK_A) {
-			textfield.setCaretPosition(0);
+			textField.setCaretPosition(0);
+			stopSearchMode();
 			arg0.consume();
 			return;
 		}
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_K) {
-			textfield.setText(textfield.getText().substring(0,
-					textfield.getCaretPosition()));
+			textField.setText(textField.getText().substring(0,
+					textField.getCaretPosition()));
+			stopSearchMode();
 		}
 
 		/* ctrl-p */
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_P) {
-			textfield.setText(history.previous());
+			textField.setText(history.previous());
+			stopSearchMode();
 			arg0.consume();
 			return;
 		}
@@ -417,14 +443,57 @@ class CommunicationThread implements Runnable, KeyListener {
 		/* ctrl-n */
 
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_N) {
-			textfield.setText(history.next());
+			textField.setText(history.next());
+			stopSearchMode();
 			arg0.consume();
 			return;
 		}
+	}
 
+	private void stopSearchMode() {
+		if (textFieldSearchMode != null) {
+			textFieldSearchMode = null;
+			textPane.appendPlain("Stopping search\n", Color.WHITE);
+		}
+	}
+
+	private boolean updateChoiceWithHistorySearch(JTextArea textfield) {
+		if (textFieldSearchMode == null || textFieldSearchMode.length() == 0) {
+			return false;
+		}
+		String search = history.search(textFieldSearchMode);
+		if (search != null) {
+			textfield.setText(search);
+			return true;
+		}
+		stopSearchMode();
+		return false;
 	}
 
 	public void keyTyped(KeyEvent arg0) {
+
+		if (startSearchMode) {
+			textPane.appendPlain("Starting search.\n", Color.WHITE);
+
+			textFieldSearchMode = new StringBuilder();
+			arg0.consume();
+			startSearchMode = false;
+			return;
+		}
+
+		if (textFieldSearchMode != null) {
+			if (!arg0.isControlDown() && !arg0.isAltDown() && (Character.isAlphabetic(arg0.getKeyChar()) || arg0.getKeyChar() == ' ')) {
+				textFieldSearchMode.append(arg0.getKeyChar());
+			}
+
+			if (updateChoiceWithHistorySearch((JTextArea) arg0.getComponent())) {
+				arg0.consume();
+			}
+
+		}
+
+
+
 		JTextArea textfield = (JTextArea) arg0.getComponent();
 
 		String raw = textfield.getText().replaceAll("\n", "");
@@ -432,6 +501,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		switch (arg0.getKeyChar()) {
 			case '\n':
+				stopSearchMode();
 				if (doClientAction(raw)) {
 					textfield.setText("");
 					return;
@@ -477,6 +547,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		}
 
 	}
+
 	private boolean doClientAction(String raw) {
 		if (raw.equals("#history")) {
 			textPane.appendPlain(history.allHistory(), Color.WHITE);

@@ -492,8 +492,6 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		}
 
-
-
 		JTextArea textfield = (JTextArea) arg0.getComponent();
 
 		String raw = textfield.getText().replaceAll("\n", "");
@@ -501,6 +499,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		switch (arg0.getKeyChar()) {
 			case '\n':
+			case '\r':
 				stopSearchMode();
 				if (doClientAction(raw)) {
 					textfield.setText("");

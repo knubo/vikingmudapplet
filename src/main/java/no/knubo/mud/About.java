@@ -56,7 +56,8 @@ class About {
 				"feature in the game. Though here the client\n" +
 				"will help. The aliases you you add in the settings menu can do\n" +
 				"several commands in sequence. If you add 'smile,smile,smile'\n" +
-				"when typing #smile it will send the command smile 3 times to\n" +
-				"the mud.";
+				"when typing smile it will send the command smile 3 times to\n" +
+				"the mud. If you need to send a command without the alias\n"+
+				"append a ! first.";
 	}
 }

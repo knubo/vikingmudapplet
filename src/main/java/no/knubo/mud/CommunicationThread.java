@@ -518,16 +518,13 @@ class CommunicationThread implements Runnable, KeyListener {
 				String[] actions = null;
 				if (raw.startsWith("$")) {
 					actions = raw.substring(1).split(";");
-				} else if(raw.startsWith("#")) {
-					String doit = aliases.get(raw.substring(1));
+				} else {
+					String doit = aliases.get(raw);
 					if(doit != null) {
 						actions = doit.split(",");
 					} else {
 						actions = new String[] {raw};
 					}
-
-				} else {
-					actions = new String[]{raw};
 				}
 
 				for (int k = 0; k < actions.length; k++) {

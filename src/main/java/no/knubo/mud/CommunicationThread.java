@@ -376,7 +376,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void keyPressed(KeyEvent arg0) {
 
-		JTextArea textfield = (JTextArea) arg0.getComponent();
+		JTextArea textField = (JTextArea) arg0.getComponent();
 
 		int keyCode = arg0.getKeyCode();
 
@@ -387,12 +387,12 @@ class CommunicationThread implements Runnable, KeyListener {
 			return;
 		}
 		if (keyCode == KeyEvent.VK_UP) {
-			textfield.setText(history.previous());
+			textField.setText(history.previous());
 			stopSearchMode();
 			return;
 		}
 		if (keyCode == KeyEvent.VK_DOWN) {
-			textfield.setText(history.next());
+			textField.setText(history.next());
 			stopSearchMode();
 			return;
 		}
@@ -400,10 +400,28 @@ class CommunicationThread implements Runnable, KeyListener {
 			stopSearchMode();
 			return;
 		}
+
+		/* ctrl - d */
+		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_D) {
+			String text = textField.getText();
+			int caretPosition = textField.getCaretPosition();
+
+			if(text.length() > caretPosition) {
+				textField.setText(text.substring(0,
+						caretPosition) + text.substring(textField.getCaretPosition() + 1));
+				textField.setCaretPosition(caretPosition);
+			}
+			stopSearchMode();
+			arg0.consume();
+			return;
+		}
+
+
 		if (arg0.isControlDown() || arg0.isMetaDown()) {
 			stopSearchMode();
 			return;
 		}
+
 	}
 
 	public void keyReleased(KeyEvent arg0) {
@@ -426,11 +444,16 @@ class CommunicationThread implements Runnable, KeyListener {
 			arg0.consume();
 			return;
 		}
+
+		/* ctrl - k */
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_K) {
 			textField.setText(textField.getText().substring(0,
 					textField.getCaretPosition()));
 			stopSearchMode();
+			arg0.consume();
+			return;
 		}
+
 
 		/* ctrl-p */
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_P) {
@@ -441,7 +464,6 @@ class CommunicationThread implements Runnable, KeyListener {
 		}
 
 		/* ctrl-n */
-
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_N) {
 			textField.setText(history.next());
 			stopSearchMode();

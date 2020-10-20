@@ -60,6 +60,7 @@ class CommunicationThread implements Runnable, KeyListener {
 	private long lastAction;
 	private StringBuilder textFieldSearchMode;
 	private boolean startSearchMode;
+	private TabCompletion tabCompletion;
 
 	CommunicationThread(HashMap<String, String> aliases, HashMap<String, String> triggers,
 						ColorPane textPane, ColorPane chatPane, History history,
@@ -379,6 +380,32 @@ class CommunicationThread implements Runnable, KeyListener {
 		JTextArea textField = (JTextArea) arg0.getComponent();
 
 		int keyCode = arg0.getKeyCode();
+
+		if (arg0.getKeyCode() == KeyEvent.VK_TAB) {
+			if (tabCompletion == null) {
+				String text = textField.getText();
+				int start = textInput.getCaretPosition() - 1;
+				int end = textInput.getCaretPosition() - 1;
+				while (start > 0 && Character.isLetterOrDigit(text.charAt(start - 1))) {
+					start--;
+				}
+				while (end < text.length() - 1 && Character.isLetterOrDigit(text.charAt(end + 1))) {
+					end++;
+				}
+
+				tabCompletion = new TabCompletion(textPane.getText(), text.substring(start, end), textField.getText(), textInput.getCaretPosition(), start, end);
+			}
+			if (arg0.isShiftDown()) {
+				textField.setText(tabCompletion.getPreviousSuggestion());
+				textField.setCaretPosition(tabCompletion.getCaretPositon());
+			} else {
+				textField.setText(tabCompletion.getNextSuggestion());
+				textField.setCaretPosition(tabCompletion.getCaretPositon());
+			}
+			arg0.consume();
+			return;
+		}
+		tabCompletion = null;
 
 		if (arg0.getKeyCode() == KeyEvent.VK_R && arg0.isControlDown() &&
 				textFieldSearchMode == null) {

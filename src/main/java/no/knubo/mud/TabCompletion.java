@@ -12,6 +12,7 @@ public class TabCompletion {
     private int start;
     private int end;
     private int caretPositon;
+    private String lastPickedWord;
 
     public TabCompletion(String text, String word, String inputText, int caretPositon, int start, int end) {
         this.word = word;
@@ -26,15 +27,17 @@ public class TabCompletion {
     }
 
     public int getCaretPositon() {
-        return caretPositon;
+        return start+lastPickedWord.length();
     }
 
     public String getNextSuggestion() {
-        return inputText.substring(0, start) + getNextWord() + inputText.substring(end + 1);
+        lastPickedWord = getNextWord();
+        return inputText.substring(0, start) + lastPickedWord + inputText.substring(end + 1);
     }
 
     public String getPreviousSuggestion() {
-        return inputText.substring(0, start) + getPreviousWord() + inputText.substring(end + 1);
+        lastPickedWord = getPreviousWord();
+        return inputText.substring(0, start) + lastPickedWord + inputText.substring(end + 1);
     }
 
     public String getNextWord() {

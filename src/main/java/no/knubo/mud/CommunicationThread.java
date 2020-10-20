@@ -393,7 +393,7 @@ class CommunicationThread implements Runnable, KeyListener {
 					end++;
 				}
 
-				tabCompletion = new TabCompletion(textPane.getText(), text.substring(start, end), textField.getText(), textInput.getCaretPosition(), start, end);
+				tabCompletion = new TabCompletion(textPane.getText(), text.substring(start, end), textField.getText(), start, end);
 			}
 			if (arg0.isShiftDown()) {
 				textField.setText(tabCompletion.getPreviousSuggestion());

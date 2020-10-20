@@ -11,16 +11,18 @@ public class TabCompletion {
     private String inputText;
     private int start;
     private int end;
-    private int caretPositon;
     private String lastPickedWord;
 
-    public TabCompletion(String text, String word, String inputText, int caretPositon, int start, int end) {
+    public TabCompletion(String text, String word, String inputText, int start, int end) {
         this.word = word;
         this.inputText = inputText;
         this.start = start;
         this.end = end;
-        this.caretPositon = caretPositon;
         String lowerWord = word.toLowerCase();
+
+        if(text.length() > 50000) {
+            text = text.substring(text.length()-50000);
+        }
         iterator = Arrays.asList(text.split("\\W"))
                 .stream().filter(t -> t.length() > 0).filter(t -> t.toLowerCase().startsWith(lowerWord))
                 .distinct().collect(Collectors.toList()).listIterator();

@@ -386,14 +386,14 @@ class CommunicationThread implements Runnable, KeyListener {
 				String text = textField.getText();
 				int start = textInput.getCaretPosition() - 1;
 				int end = textInput.getCaretPosition() - 1;
-				while (start > 0 && Character.isLetterOrDigit(text.charAt(start - 1))) {
+				while (start > 0 && (Character.isLetterOrDigit(text.charAt(start - 1)) || text.charAt(start - 1) == '/')) {
 					start--;
 				}
-				while (end < text.length() - 1 && Character.isLetterOrDigit(text.charAt(end + 1))) {
+				while (end < text.length() - 1 && (Character.isLetterOrDigit(text.charAt(end + 1)) || text.charAt(start - 1) == '/')) {
 					end++;
 				}
 
-				tabCompletion = new TabCompletion(textPane.getText(), text.substring(start, end), textField.getText(), start, end);
+				tabCompletion = new TabCompletion(textPane.getText(), text.substring(start, end + 1), textField.getText(), start, end);
 			}
 			if (arg0.isShiftDown()) {
 				textField.setText(tabCompletion.getPreviousSuggestion());
@@ -405,7 +405,11 @@ class CommunicationThread implements Runnable, KeyListener {
 			arg0.consume();
 			return;
 		}
+		if (arg0.getKeyCode() == KeyEvent.VK_SHIFT) {
+			return;
+		}
 		tabCompletion = null;
+
 
 		if (arg0.getKeyCode() == KeyEvent.VK_R && arg0.isControlDown() &&
 				textFieldSearchMode == null) {

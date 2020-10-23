@@ -1,6 +1,8 @@
 package no.knubo.mud;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.Collectors;
 
@@ -23,10 +25,15 @@ public class TabCompletion {
         if(text.length() > 50000) {
             text = text.substring(text.length()-50000);
         }
-        iterator = Arrays.asList(text.split("\\W"))
+
+        List<String> strings = Arrays.asList(text.split("[^a-zA-Z0-9\\/]"));
+        Collections.reverse(strings);
+        List<String> collect = strings
                 .stream().filter(t -> t.length() > 0).filter(t -> t.toLowerCase().startsWith(lowerWord))
-                .distinct().collect(Collectors.toList()).listIterator();
-    }
+                .distinct()
+                .collect(Collectors.toList());
+        iterator = collect.listIterator();
+        }
 
     public int getCaretPositon() {
         return start+lastPickedWord.length();

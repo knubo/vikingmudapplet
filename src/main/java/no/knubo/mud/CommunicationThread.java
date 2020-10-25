@@ -381,7 +381,7 @@ class CommunicationThread implements Runnable, KeyListener {
 
 		int keyCode = arg0.getKeyCode();
 
-		if (arg0.getKeyCode() == KeyEvent.VK_TAB) {
+		if (arg0.getKeyCode() == KeyEvent.VK_TAB && textInput.getCaretPosition() > 0) {
 			if (tabCompletion == null) {
 				String text = textField.getText();
 				int start = textInput.getCaretPosition() - 1;

@@ -440,8 +440,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 	}
 
 	boolean loginCheck() {
-		if (communicationThread == null
-				|| !communicationThread.isLoginComplete()) {
+		if (communicationThread == null) {
 			textPane.appendPlain("You need to connect first.\n", Color.YELLOW);
 			return false;
 		}

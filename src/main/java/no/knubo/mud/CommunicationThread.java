@@ -55,7 +55,6 @@ class CommunicationThread implements Runnable, KeyListener {
 	/**
 	 * Try to track if login is complete.
 	 */
-	private boolean loginComplete = false;
 	private boolean passwordInput = false;
 	private long lastAction;
 	private StringBuilder textFieldSearchMode;
@@ -115,7 +114,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		try {
 			leftovers = null;
 			vikingSocket = new Socket("connect.vikingmud.org", 2001);
-			vikingOut = new PrintStream(vikingSocket.getOutputStream(), true);
+			vikingOut = new PrintStream(vikingSocket.getOutputStream(), true, "UTF8");
 			vikingIn = vikingSocket.getInputStream();
 
 			/*
@@ -140,7 +139,6 @@ class CommunicationThread implements Runnable, KeyListener {
 		} catch (IOException e) {
 			textPane.setText(e.getMessage());
 		}
-		loginComplete = false;
 		textPane.appendPlain("Connection to mud closed.\n", Color.WHITE);
 		System.out.println("Socket loop ended");
 	}
@@ -290,10 +288,8 @@ class CommunicationThread implements Runnable, KeyListener {
 	private void addText(String text) {
 
 		if (regex.matcher(text).find() || text.contains("tells") || text.contains("You tell") || text.contains("shouts")) {
-			chatPane.setEditable(true);
 			chatPane.append(currentColor, text + "\n", currentBold, currentUnderline,
 					currentRevVid);
-			chatPane.setEditable(false);
 		}
 		if (lastAction + 60000 > System.currentTimeMillis()) {
 			doTriggers(text);
@@ -318,8 +314,7 @@ class CommunicationThread implements Runnable, KeyListener {
 			}
 
 			try {
-				if (loginComplete
-						&& lastPoll + timeBetweenPoll < System
+				if (lastPoll + timeBetweenPoll < System
 						.currentTimeMillis() &&
 						lastAction + 60000 > System.currentTimeMillis()
 				) {
@@ -337,33 +332,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		if (read == -1) {
 			return null;
 		}
-		boolean replace = false;
-
-		for (int i = 0; i < read; i++) {
-			byte b = bytes[i];
-
-			if (b < 27 && b != 10 && b != 9 && b != 13) {
-
-				read--;
-
-				/* -1 -5 1 */
-				if (b == -5) {
-					loginComplete = false;
-					passwordInput = true;
-					System.out.println("Password input");
-				} else if (b == -4) {
-					loginComplete = true;
-					passwordInput = false;
-					System.out.println("Login complete");
-				}
-				bytes[i] = 7;
-				replace = true;
-			}
-		}
-		if(replace) {
-			return new String(bytes,0,read).replaceAll(String.valueOf(((char)7)), "");
-		}
-		return new String(bytes, 0, read);
+		return new String(bytes, 0, read, "UTF8");
 	}
 
 	private void doActions() {
@@ -637,19 +606,13 @@ class CommunicationThread implements Runnable, KeyListener {
 
 	public void loginGuest() {
 		startupLists.add("guest");
-		loginComplete = true;
 	}
 
 	public void loginUser(String[] userAndPassword) {
 		startupLists.add(userAndPassword[0]);
 		startupLists.add(userAndPassword[1]);
-		loginComplete = true;
 	}
 
-
-	public boolean isLoginComplete() {
-		return loginComplete;
-	}
 
 	public void quit() {
 		try {

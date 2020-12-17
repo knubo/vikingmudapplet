@@ -137,7 +137,7 @@ class CommunicationThread implements Runnable, KeyListener {
 				showText(fromServer);
 			}
 		} catch (IOException e) {
-			textPane.setText(e.getMessage());
+			textPane.appendPlain(e.getMessage()+"\n", Color.WHITE);
 		}
 		textPane.appendPlain("Connection to mud closed.\n", Color.WHITE);
 		System.out.println("Socket loop ended");

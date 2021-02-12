@@ -1,5 +1,8 @@
 package no.knubo.mud;
 
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.BritishEnglish;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
@@ -76,6 +79,10 @@ class CommunicationThread implements Runnable, KeyListener {
 		startupLists = new LinkedList();
 	}
 
+	public void toggleSpellcheck() {
+		textPane.toggleSpelling();
+	}
+
 	class RevVid {
 		RevVid(Color x) {
 			color = x;
@@ -91,7 +98,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		formatCodes.put("31", Color.RED);
 		formatCodes.put("32", Color.GREEN);
 		formatCodes.put("33", Color.YELLOW);
-		formatCodes.put("34", Color.BLUE);
+		formatCodes.put("34", new Color(80,80,255));
 		formatCodes.put("35", Color.MAGENTA);
 		formatCodes.put("36", Color.cyan);
 		formatCodes.put("37", Color.WHITE);
@@ -458,7 +465,8 @@ class CommunicationThread implements Runnable, KeyListener {
 		/* ctrl-p */
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_P) {
 			textField.setText(history.previous());
-			stopSearchMode();
+			textField.setCaretPosition(textField.getText().length());
+				stopSearchMode();
 			arg0.consume();
 			return;
 		}
@@ -466,6 +474,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		/* ctrl-n */
 		if (arg0.isControlDown() && arg0.getKeyCode() == KeyEvent.VK_N) {
 			textField.setText(history.next());
+			textField.setCaretPosition(textField.getText().length());
 			stopSearchMode();
 			arg0.consume();
 			return;
@@ -486,6 +495,7 @@ class CommunicationThread implements Runnable, KeyListener {
 		String search = history.search(textFieldSearchMode);
 		if (search != null) {
 			textfield.setText(search);
+			textfield.setCaretPosition(search.length());
 			return true;
 		}
 		stopSearchMode();

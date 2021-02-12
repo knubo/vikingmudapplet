@@ -7,6 +7,7 @@ public interface MenuTopics {
 	String HELP_CLIENT = "Client";
 	String HELP_ALIASES = "Aliases";
 	String HELP_CHANGES = "Changes";
+	String HELP_SPELLING = "Toggle spellcheker";
 
 	String HISTORY_SHOW_ALL = "Show history";
 	String HISTORY_NEXT_COMMAND = "Next command (arrow up)";

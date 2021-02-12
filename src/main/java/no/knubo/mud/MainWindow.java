@@ -94,8 +94,17 @@ public class MainWindow extends JFrame implements MenuTopics {
 		displayConstraints.weightx = 0;
 		displayConstraints.weighty = 0;
 
-		gbl.setConstraints(textInput, displayConstraints);
-		add(textInput);
+
+		JScrollPane scroll = new JScrollPane (textInput,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		scroll.getVerticalScrollBar().setPreferredSize(new Dimension(0,0));
+		scroll.getHorizontalScrollBar().setPreferredSize(new Dimension(0,0));
+
+		gbl.setConstraints(scroll, displayConstraints);
+		int inputHeight = (int) (textInput.getFontMetrics(textInput.getFont())
+				.getHeight() * 2.5);
+		scroll.setMinimumSize(new Dimension(textPane.getWidth(), inputHeight));
+		add(scroll);
 
 		makeMenu();
 
@@ -636,6 +645,10 @@ public class MainWindow extends JFrame implements MenuTopics {
 						}
 						communicationThread.doAction("!help");
 						break;
+					case HELP_SPELLING:
+						communicationThread.toggleSpellcheck();
+						return;
+
 					case HELP_TOPICS:
 						if (!loginCheck()) {
 							return;
@@ -668,6 +681,7 @@ public class MainWindow extends JFrame implements MenuTopics {
 		menu.add(menuitem(HELP_GETTING_STARTED, actionListener));
 		menu.add(menuitem(HELP_ALIASES, actionListener));
 		menu.add(menuitem(HELP_TOPICS, actionListener));
+		menu.add(menuitem(HELP_SPELLING, actionListener));
 		menu.add(new JSeparator());
 
 		ArrayList<String> topics = new ArrayList<>(helpMap.keySet());

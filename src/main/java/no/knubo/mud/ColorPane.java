@@ -1,26 +1,82 @@
 package no.knubo.mud;
 
-import java.awt.Color;
-import java.awt.Font;
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.BritishEnglish;
+import org.languagetool.rules.RuleMatch;
 
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTextPane;
+import javax.swing.*;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
+import java.awt.*;
+import java.io.IOException;
+import java.util.List;
 
 class ColorPane extends JTextPane {
+	JLanguageTool langTool = new JLanguageTool(new BritishEnglish());
+	private boolean spellchecking;
+
+
+	public ColorPane() {
+		new Thread(() -> {
+			int lastPos = 0;
+
+			while(true) {
+				try {
+					if(!spellchecking) {
+						Thread.sleep(3000);
+						continue;
+					}
+
+					int nextLen;
+
+					String t = getText();
+					nextLen = t.length();
+
+					if(nextLen != lastPos) {
+
+						String check = t.substring(lastPos);
+
+						List<RuleMatch> result = langTool.check(check);
+
+						for (RuleMatch ruleMatch : result) {
+							int from = ruleMatch.getFromPos();
+							int to = ruleMatch.getToPos();
+
+							StyleContext sc = StyleContext.getDefaultStyleContext();
+							synchronized (langTool) {
+								AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,
+										StyleConstants.Foreground, Color.RED);
+								aset = sc.addAttribute(aset, StyleConstants.Underline, true);
+
+								setCaretPosition(lastPos+from);
+								setSelectionEnd(lastPos+to	);
+								setCharacterAttributes(aset, false);
+								setCaretPosition(getDocument().getLength());
+							}
+						}
+
+						lastPos = nextLen;
+					}
+
+					Thread.sleep(1000);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+
+			}
+		}).start();
+	}
 
 	public void appendPlain(String s, Color color) {
 		append(color, s, false, false, false);
 	}
 
 	public void append(Color cInput, String s, boolean bold, boolean underline,
-			boolean revVid) {
+					   boolean revVid) {
 		Color c = cInput;
-		
+
 		Color bgcolor = null;
 
 		if (revVid) {
@@ -49,15 +105,17 @@ class ColorPane extends JTextPane {
 		aset = sc.addAttribute(aset, StyleConstants.Background, bgcolor);
 
 		/* same value as getText().length(); */
-		int len = getDocument().getLength(); 
-		setCaretPosition(len); // place caret at the end (with no selection)
-		setCharacterAttributes(aset, false);
-		replaceSelection(s); 
-		
-		/* Force cursor to end of document to make it scroll */
-		len = getDocument().getLength(); 
-		setCaretPosition(len);
-		// there is no selection, so inserts at caret
+		synchronized (langTool) {
+			int len = getDocument().getLength();
+
+			setCaretPosition(len); // place caret at the end (with no selection)
+			setCharacterAttributes(aset, false);
+			replaceSelection(s);
+
+			/* Force cursor to end of document to make it scroll */
+			len = getDocument().getLength();
+			setCaretPosition(len);
+		}		// there is no selection, so inserts at caret
 	}
 
 	public static void main(String argv[]) {
@@ -105,4 +163,7 @@ class ColorPane extends JTextPane {
 		return j * j == n;
 	}
 
+	public void toggleSpelling() {
+		spellchecking = !spellchecking;
+	}
 }
